@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { photos } from "../../data/photos.ts";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { concertLabel, fetchArtistsBySceneId, fetchSceneById, fileUrl } from "../../lib/collections";
+
+const id = Astro.params.id ?? "";
+const scene = await fetchSceneById(id);
+if (!scene) {
+	return Astro.redirect("/404");
+}
+
+const artists = await fetchArtistsBySceneId(id);
+const sceneImage = fileUrl(scene, "photos", "1400x900") || photos.scene1.src;
+---
+
+<BaseLayout title={`${scene.nom_scene} - Echos Sonores`} description="Detail scene" includeLightbox={false}>
+	<Header activePath="/scenes" />
+	<main>
+		<button class="back-btn" type="button" onclick="window.history.back()" data-aos="fade-right" data-aos-duration="800">
+			<span aria-hidden="true">←</span>
+			<span class="u-sr-only">Retour aux scenes</span>
+		</button>
+
+		<section class="section section--wrapper scene-page" data-aos="fade-up" data-aos-duration="1000">
+			<h1 class="scene-page__title">{scene.nom_scene}</h1>
+
+			<img class="scene-page__img" src={sceneImage} alt={`Photo de ${scene.nom_scene}`} loading="lazy" />
+
+			<p class="scene-page__text">{scene.description ?? "Description indisponible."}</p>
+
+			<h2 class="scene-page__subtitle">Artistes programmés :</h2>
+
+			<ul class="scene-artists u-list-unstyled" data-aos="fade-up" data-aos-duration="900" data-aos-delay="120">
+				{artists.length === 0 ? (
+					<li class="scene-artists__item">Aucun artiste programme.</li>
+				) : (
+					artists.map((artist: any) => (
+						<li class="scene-artists__item">
+							{artist.nom_artiste ?? "Artiste"} - {concertLabel(artist.date_representation).split(" - ")[0]}
+						</li>
+					))
+				)}
+			</ul>
+
+			<a class="btn scene-page__cta" href="/artistes" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+				Voir tous les Artistes
+			</a>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "404 — Page non trouvée";
+const description = "Page non trouvee sur Echos Sonores : verifiez l'URL ou retournez a l'accueil.";
+const currentPath = "/404.html";
+---
+
+<BaseLayout title={title} description={description} includeLightbox={false}>
+<main class="page-404__main" role="main">
+    <h1 class="u-sr-only">Page non trouvée</h1>
+    <div class="page-404__circle">
+      <p class="page-404__code">404</p>
+      <p class="page-404__text">Page introuvable</p>
+    </div>
+    <a class="page-404__link" href="/">
+      Revenir à l’accueil
+    </a>
+    <form class="contact-form page-404__form" action="https://duckduckgo.com/" method="GET" x-data="{ q:'', }" x-on:submit="q = q + ' site:mmimontbeliard.com'">
+      <label for="q" class="contact-form__label">Texte à chercher :</label>
+      <input class="contact-form__input" type="text" id="q" name="q" x-model="q" placeholder="Rechercher sur le site" />
+      <button class="contact-form__submit" type="submit">Rechercher</button>
+    </form>
+  </main>
+</BaseLayout>

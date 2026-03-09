@@ -1,0 +1,25 @@
+---
+import { concertLabel } from "../lib/collections";
+
+interface Props {
+  artist: any;
+  sceneName?: string;
+  imageUrl?: string;
+  aosDelay?: number;
+}
+
+const { artist, sceneName = "Scene inconnue", imageUrl = "", aosDelay = 0 } = Astro.props;
+---
+
+<li class="artists-list__item" data-aos="fade-up" data-aos-duration="900" data-aos-delay={aosDelay}>
+  <article class="artist-card">
+    <a class="artist-card__link" href={`/artistes/${artist.id}`}>
+      {imageUrl && <img class="artist-card__img" src={imageUrl} alt={artist.nom_artiste ?? "Artiste"} loading="lazy" />}
+      <div class="artist-card__content">
+        <h3 class="artist-card__name">{artist.nom_artiste ?? "(sans nom)"}</h3>
+        <p class="artist-card__date">{concertLabel(artist.date_representation)}</p>
+        <p class="artist-card__scene">{sceneName}</p>
+      </div>
+    </a>
+  </article>
+</li>

@@ -1,0 +1,56 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  includeLightbox?: boolean;
+}
+
+const { title, description = "Echos Sonores", includeLightbox = false } = Astro.props;
+const pageUrl = Astro.url.href;
+const pageImage = "/assets/favicons/favicon.svg";
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={pageImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={pageImage} />
+    <link rel="canonical" href={pageUrl} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+    <script type="module">
+      import "/src/js/menu.js";
+      import "/src/js/carousel.js";
+      import "/src/js/faq.js";
+      import "/src/js/scroll-animations.js";
+    </script>
+    {includeLightbox && (
+      <script type="module">
+        import "/src/js/lightbox.js";
+      </script>
+    )}
+  </body>
+</html>

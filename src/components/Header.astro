@@ -1,0 +1,66 @@
+---
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  activePath?: string;
+}
+
+const { activePath = "/" } = Astro.props;
+
+const navItems: NavItem[] = [
+  { href: "/", label: "Accueil" },
+  { href: "/festival", label: "Le Festival" },
+  { href: "/programme", label: "Programme" },
+  { href: "/artistes", label: "Artistes" },
+  { href: "/scenes", label: "Scènes" },
+  { href: "/infos", label: "Infos pratiques" },
+  { href: "/contact", label: "Contact" },
+];
+
+const isActive = (href: string) => activePath === href;
+---
+
+<header class="header">
+  <a class="header__link" href="/">
+    <img class="header__logo" src="/assets/icons/logo-light.svg" alt="Logo du festival Echos Sonore" />
+  </a>
+
+  <button class="header__menu-btn menu-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mainNav">
+    <span class="menu-btn__bar menu-btn__bar--top" aria-hidden="true"></span>
+    <span class="menu-btn__bar menu-btn__bar--middle" aria-hidden="true"></span>
+    <span class="menu-btn__bar menu-btn__bar--bottom" aria-hidden="true"></span>
+  </button>
+
+  <nav class="header__menu menu" id="mainNav" hidden>
+    <ul class="menu__list u-list-unstyled">
+      {navItems.map((item) => (
+        <li class="menu__item">
+          <a class={`menu__link ${isActive(item.href) ? "menu__link--active" : ""}`.trim()} href={item.href}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <ul class="menu__social-list u-list-unstyled">
+      <li class="menu__social-item">
+        <a class="menu__social-link" href="#" aria-label="Facebook">
+          <img src="/assets/icons/facebook.svg" alt="facebook-icon" class="menu__social-icon" loading="lazy" />
+        </a>
+      </li>
+      <li class="menu__social-item">
+        <a class="menu__social-link" href="#" aria-label="Instagram">
+          <img src="/assets/icons/instagram-alt.svg" alt="instagram-icon" class="menu__social-icon" loading="lazy" />
+        </a>
+      </li>
+      <li class="menu__social-item">
+        <a class="menu__social-link" href="#" aria-label="TikTok">
+          <img src="/assets/icons/tiktok.svg" alt="tiktok-icon" class="menu__social-icon" loading="lazy" />
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>

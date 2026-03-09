@@ -1,0 +1,18 @@
+---
+interface Props {
+  scene: any;
+  imageUrl?: string;
+  aosDelay?: number;
+}
+
+const { scene, imageUrl = "", aosDelay = 0 } = Astro.props;
+---
+
+<li class="scenes-list__item" data-aos="fade-up" data-aos-duration="900" data-aos-delay={aosDelay}>
+  <article class="scene-card">
+    <a class="scene-card__link" href={`/scenes/${scene.id}`}>
+      {imageUrl && <img class="scene-card__img" src={imageUrl} alt={scene.nom_scene ?? "Scene"} loading="lazy" />}
+      <div class="scene-card__label">{scene.nom_scene ?? "Scene sans nom"}</div>
+    </a>
+  </article>
+</li>

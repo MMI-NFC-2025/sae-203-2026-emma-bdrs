@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import ArtistListItem from "../../components/ArtistListItem.astro";
+import { photos } from "../../data/photos.ts";
+import { fetchArtists, fetchScenes, fileUrl } from "../../lib/collections";
+
+const title = "Artistes - Echos Sonores";
+const description = "Tous les artistes Echos Sonores, genres, bios et horaires du festival.";
+const currentPath = "/artistes";
+
+const artists = await fetchArtists();
+const scenes = await fetchScenes();
+const sceneMap = new Map(scenes.map((scene: any) => [scene.id, scene.nom_scene ?? "Scene inconnue"]));
+const artistFallbacks = [
+  photos.artiste1.src,
+  photos.artiste2.src,
+  photos.artiste3.src,
+  photos.artiste4.src,
+  photos.artiste5.src,
+  photos.artiste6.src,
+];
+---
+
+<BaseLayout title={title} description={description} includeLightbox={false}>
+  <Header activePath={currentPath} />
+
+  <main>
+    <section class="section section--wrapper artists artists--list" data-aos="fade-up" data-aos-duration="900">
+      <header class="section__header artists__header" data-aos="fade-up" data-aos-duration="900" data-aos-delay="80">
+        <h1 class="section__title artists__title">Les artistes</h1>
+      </header>
+
+      <p class="artists__intro" data-aos="fade-up" data-aos-duration="900" data-aos-delay="140">
+        Découvrez les artistes programmés sur les 4 jours du festival Echos
+        Sonore: roots, dub, reggae fusion et musiques du monde.
+      </p>
+
+      {
+        artists.length === 0 ? (
+          <p>Aucun artiste disponible pour le moment.</p>
+        ) : (
+          <ul class="artists-list u-list-unstyled">
+            {artists.map((artist: any, index: number) => (
+              <ArtistListItem
+                artist={artist}
+                sceneName={sceneMap.get(artist.scene) ?? "Scene inconnue"}
+                imageUrl={fileUrl(artist, "photo_principale", "700x500") || artistFallbacks[index % artistFallbacks.length]}
+                aosDelay={index * 90}
+              />
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

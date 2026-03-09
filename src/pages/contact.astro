@@ -1,0 +1,60 @@
+﻿---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const title = "Contact — Echos Sonores";
+const description = "Coordonnees et formulaire pour contacter l'equipe du festival Echos Sonores.";
+const currentPath = "/contact";
+---
+
+<BaseLayout title={title} description={description} includeLightbox={false}>
+<Header activePath={currentPath} />
+      
+      <main class="contact-page">
+        <section class="section section--wrapper">
+          <h1 class="section__title contact">Contact</h1>
+          <!-- FORMULAIRE -->
+          <form class="contact-form" action="#" method="post" autocomplete="on">
+            <div class="contact-form__group">
+              <label class="contact-form__label u-sr-only" for="name">
+                Nom
+              </label>
+              <input class="contact-form__input" type="text" id="name" name="name" required placeholder="NAME" />
+            </div>
+      
+            <div class="contact-form__group">
+              <label class="contact-form__label u-sr-only" for="email">
+                Email
+              </label>
+              <input class="contact-form__input" type="email" id="email" name="email" required placeholder="MAIL" />
+            </div>
+      
+            <div class="contact-form__group">
+              <label class="contact-form__label u-sr-only" for="subject">
+                Sujet
+              </label>
+              <input class="contact-form__input" type="text" id="subject" name="subject" required placeholder="SUJET" />
+            </div>
+      
+            <div class="contact-form__group">
+              <label class="contact-form__label u-sr-only" for="message">
+                Message
+              </label>
+              <textarea class="contact-form__textarea" id="message" name="message" rows="6" required
+                placeholder="MESSAGE"></textarea>
+            </div>
+      
+            <button class="btn contact-form__submit" type="submit">
+              Envoyer
+            </button>
+          </form>
+        </section>
+      <Footer />
+
+
+
+
+
+
+</BaseLayout>

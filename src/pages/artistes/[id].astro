@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { photos } from "../../data/photos.ts";
+import { concertLabel, fetchArtistById, fetchSceneById, fileUrl, galleryUrls } from "../../lib/collections";
+
+const id = Astro.params.id ?? "";
+const artist = await fetchArtistById(id);
+const scene = artist?.scene ? await fetchSceneById(artist.scene) : null;
+
+if (!artist) {
+	return Astro.redirect("/404");
+}
+
+const heroImage = fileUrl(artist, "photo_principale", "1200x900") || photos.artiste1.src;
+const gallery = galleryUrls(artist, "galerie_photo", "1200x1200");
+const fallbackGallery = [photos.g1Artiste1.src, photos.g2Artiste1.src, photos.g3Artiste1.src];
+const images = gallery.length > 0 ? gallery : fallbackGallery;
+const bioText =
+  artist?.description ||
+  artist?.biographie ||
+  `${artist.nom_artiste ?? "Cet artiste"} est programme sur Echos Sonores. Retrouvez son set ${
+    artist.genre_musical ? `de ${artist.genre_musical.toLowerCase()}` : ""
+  } pendant le festival.`;
+---
+
+<BaseLayout title={`${artist.nom_artiste} - Echos Sonores`} description="Detail artiste" includeLightbox={false}>
+	<Header activePath="/artistes" />
+	<main class="artist-page">
+		<section class="artist-page__hero" data-aos="fade-up" data-aos-duration="1200">
+			<button class="artist-page__back-btn" type="button" onclick="window.history.back()">
+				<span aria-hidden="true">←</span>
+			</button>
+			<img class="artist-page__hero-img" src={heroImage} alt={artist.nom_artiste ?? "Artiste"} loading="lazy" />
+		</section>
+
+		<section class="section section--wrapper artist-page__info" data-aos="fade-up" data-aos-duration="1000">
+			<header class="artist-page__header">
+				<h1 class="artist-page__name">{artist.nom_artiste}</h1>
+			</header>
+
+			<p class="artist-page__meta">
+				<span class="artist-page__date">{concertLabel(artist.date_representation)}</span>
+				<br />
+				<span class="artist-page__scene">{scene?.nom_scene ?? "Scene inconnue"}</span>
+			</p>
+
+			<p class="artist-page__bio">{bioText}</p>
+		</section>
+
+		<section class="section section--wrapper artist-page__gallery" data-aos="fade-up" data-aos-duration="1000">
+			<h2 class="u-sr-only">Galerie photo de {artist.nom_artiste}</h2>
+			<div class="artist-gallery">
+				{images.map((imageUrl: string, index: number) => (
+					<figure class="artist-gallery__item" data-aos="flip-right" data-aos-duration="900" data-aos-delay={index * 120}>
+						<img class="artist-gallery__img" src={imageUrl} alt={`${artist.nom_artiste} photo ${index + 1}`} loading="lazy" />
+					</figure>
+				))}
+			</div>
+		</section>
+
+		<section class="section section--wrapper artist-page__cta" data-aos="fade-up" data-aos-duration="900">
+			<a class="btn artist-page__program-btn" href="/programme">Voir le programme complet</a>
+		</section>
+	</main>
+	<Footer />
+</BaseLayout>

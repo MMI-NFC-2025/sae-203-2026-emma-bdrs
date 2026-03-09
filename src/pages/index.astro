@@ -1,10 +1,199 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import { photos } from "../data/photos.ts";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const title = "Accueil - Echos Sonores";
+const description = "Site officiel d'Echos Sonores : accueil, programme, artistes et infos pratiques du festival.";
+const currentPath = "/";
 ---
 
-<Layout>
-	<h1>Welcome to Astro!</h1>
-</Layout>
+<BaseLayout title={title} description={description} includeLightbox={false}>
+<Header activePath={currentPath} />
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero__content">
+          <p class="hero__festival-name">Echos Sonore –</p>
+      
+          <h1 class="hero__title">
+            Festival reggae &amp; musiques actuelles
+          </h1>
+      
+          <p class="hero__meta">
+            <span class="hero__dates">28 &rarr; 31 octobre 2026</span>
+            <span class="hero__place">Audincourt (25)</span>
+          </p>
+      
+          <a class="btn hero__cta" href="/404.html" aria-label="Accéder à la billetterie (fictive)">
+            Accéder à la billetterie
+          </a>
+        </div>
+      </section>
+
+      <!-- INFOS CLÉS -->
+      <section class="section section--wrapper section--highlight">
+        <header class="section__header">
+          <h2 class="section__title u-sr-only">
+            Informations principales du festival
+          </h2>
+        </header>
+    
+        <article class="info-card" data-aos="fade-up" data-aos-duration="800">
+          <h3 class="info-card__title">
+            28 au 31 octobre 2026
+          </h3>
+          <ul class="info-card__list u-list-unstyled">
+            <li class="info-card__item">
+              <span class="info-card__icon" aria-hidden="true">🕓</span>
+              <span>
+                <strong>Ouverture des portes :</strong>
+                16h00
+              </span>
+            </li>
+            <li class="info-card__item">
+              <span class="info-card__icon" aria-hidden="true">🎵</span>
+              <span>
+                <strong>Concerts :</strong>
+                jusqu'à 0h30
+              </span>
+            </li>
+            <li class="info-card__item">
+              <span class="info-card__icon" aria-hidden="true">📍</span>
+              <span>
+                <strong>Lieu :</strong>
+                Site en plein air – Audincourt (25)
+              </span>
+            </li>
+            <li class="info-card__item">
+              <span class="info-card__icon" aria-hidden="true">👥</span>
+              <span>
+                <strong>Capacité :</strong>
+                jusqu'à 3 000 personnes / jour
+              </span>
+            </li>
+          </ul>
+        </article>
+      </section>
+    
+      <!-- LIENS PRINCIPAUX (Le festival, Programme, Artistes, Infos pratiques) -->
+      <section class="section section--wrapper section--nav-cards">
+        <header class="section__header">
+          <h2 class="section__title u-sr-only">
+            Explorer le festival
+          </h2>
+        </header>
+    
+        <ul class="u-list-unstyled nav-cards"> 
+          <li class="nav-card nav-card--festival" data-aos="zoom-in-up">
+            <div class="nav-card__content">
+              <p class="nav-card__icon" aria-hidden="true">🎪</p>
+              <h3 class="nav-card__title">Le Festival</h3>
+              <p class="nav-card__text">
+                Un événement à taille humaine ancré dans l'écologie,
+                la convivialité et la créativité.
+              </p>
+            </div>
+            <a class="nav-card__btn btn btn--ghost" href="/festival">
+              Découvrir
+            </a>
+          </li>
+    
+          <li class="nav-card nav-card--programme" data-aos="zoom-in-up">
+            <div class="nav-card__content">
+              <p class="nav-card__icon" aria-hidden="true">🎶</p>
+              <h3 class="nav-card__title">Programme</h3>
+              <p class="nav-card__text">
+                Découvrez les artistes programmés chaque jour : roots,
+                dub, reggae fusion, world music.
+              </p>
+            </div>
+            <a class="nav-card__btn btn btn--ghost" href="/programme">
+              Découvrir
+            </a>
+          </li>
+    
+          <li class="nav-card nav-card--artistes" data-aos="zoom-in-up">
+            <div class="nav-card__content">
+              <p class="nav-card__icon" aria-hidden="true">🌟</p>
+              <h3 class="nav-card__title">Artistes</h3>
+              <p class="nav-card__text">
+                Accédez à la liste complète des artistes invités et
+                émergents.
+              </p>
+            </div>
+            <a class="nav-card__btn btn btn--ghost" href="/artistes">
+              Découvrir
+            </a>
+          </li>
+    
+          <li class="nav-card nav-card--infos" data-aos="zoom-in-up">
+            <div class="nav-card__content">
+              <p class="nav-card__icon" aria-hidden="true">📌</p>
+              <h3 class="nav-card__title">Infos pratiques</h3>
+              <p class="nav-card__text">
+                Transports, hébergements, tarifs et accessibilité pour
+                préparer votre venue.
+              </p>
+            </div>
+            <a class="nav-card__btn btn btn--ghost" href="/infos">
+              Découvrir
+            </a>
+          </li>
+        </ul>
+      </section>
+    
+      <!-- VALEURS DU FESTIVAL -->
+      <section class="section section--wrapper section--values">
+        <header class="section__header">
+          <h2 class="section__title">Nos valeurs</h2>
+        </header>
+      
+        <ul class="values u-list-unstyled">
+          <li class="values__item">
+            <p><strong>Écologique</strong> – “festival responsable”</p>
+          </li>
+          <li class="values__item">
+            <p><strong>Convivial &amp; inclusif</strong> – “une grande famille”</p>
+          </li>
+          <li class="values__item">
+            <p><strong>Créatif &amp; surprenant</strong> – “programmation audacieuse”</p>
+          </li>
+        </ul>
+      </section>
+
+      <!-- PARTENAIRES (grille simple) -->
+      <section class="section section--wrapper section--partners">
+        <header class="section__header">
+          <h2 class="section__title">Nos Partenaires</h2>
+        </header>
+      
+        <div class="partners">
+          <div class="partners__item" data-aos="zoom-in-down" data-aos-duration="3000">
+            <Image src={photos.partenaire1} alt="Partenaire 1" class="partners__logo"  />
+          </div>
+          <div class="partners__item" data-aos="zoom-in-down" data-aos-duration="2500">
+            <Image src={photos.partenaire2} alt="Partenaire 2" class="partners__logo" />
+          </div>
+          <div class="partners__item" data-aos="zoom-in-down" data-aos-duration="1000">
+            <Image src={photos.partenaire3} alt="Partenaire 3" class="partners__logo" />
+          </div>
+          <div class="partners__item" data-aos="zoom-in-down" data-aos-duration="500">
+            <Image src={photos.partenaire4} alt="Partenaire 4" class="partners__logo" />
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <Footer />
+
+
+
+
+
+
+</BaseLayout>

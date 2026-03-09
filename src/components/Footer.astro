@@ -1,0 +1,70 @@
+---
+const navItems = [
+  { href: "/", label: "Accueil" },
+  { href: "/festival", label: "Le Festival" },
+  { href: "/programme", label: "Programme" },
+  { href: "/artistes", label: "Artistes" },
+  { href: "/scenes", label: "Scènes" },
+  { href: "/infos", label: "Infos pratiques" },
+  { href: "/contact", label: "Contact" },
+];
+---
+
+<footer class="footer">
+  <div class="footer__top">
+    <nav class="footer__nav">
+      <ul class="footer__list u-list-unstyled">
+        {navItems.map((item) => (
+          <li class="footer__item">
+            <a class="footer__link" href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="footer__contact">
+      <h3 class="footer__title">Contact</h3>
+      <p>
+        Email :
+        <a class="footer__link" href="mailto:contact@echossonore.fr">
+          contact@echossonore.fr
+        </a>
+      </p>
+      <p>
+        Téléphone :
+        <a class="footer__link" href="tel:0715153681">
+          07&nbsp;15&nbsp;15&nbsp;36&nbsp;81
+        </a>
+      </p>
+      <p>
+        Adresse :
+        Rue du Dalse, 25400 Audincourt
+      </p>
+    </div>
+
+    <div class="footer__social">
+      <h3 class="footer__title">Réseaux sociaux</h3>
+      <ul class="footer__social-list u-list-unstyled">
+        <li>
+          <a class="footer__link" href="#" aria-label="Instagram">
+            <img src="/assets/icons/instagram-alt.svg" alt="" class="footer__social-icon" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a class="footer__link" href="#" aria-label="Facebook">
+            <img src="/assets/icons/facebook.svg" alt="" class="footer__social-icon" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a class="footer__link" href="#" aria-label="TikTok">
+            <img src="/assets/icons/tiktok.svg" alt="" class="footer__social-icon" loading="lazy" />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="footer__legal">
+    &copy; 2026 Echos Sonore – Projet étudiant. Site fictif réalisé dans le cadre de la SAE 105 – BUT MMI Montbéliard.
+  </p>
+</footer>
