@@ -1,6 +1,6 @@
 import PocketBase from "pocketbase";
 
-export const pb = new PocketBase("https://festival.badarous.fr/_/");
+export const pb = new PocketBase("https://festival.badarous.fr");
 
 export async function getArtistsSortedByRepresentationDate(collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList();
