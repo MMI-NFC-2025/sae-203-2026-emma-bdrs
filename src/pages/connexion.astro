@@ -1,0 +1,108 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { authenticateUserByEmail, getAuthenticatedUserByToken } from "../../backend/backend.mjs";
+
+const title = "Connexion - Echos Sonores";
+const description = "Connexion utilisateur avec la collection users.";
+const currentPath = "/connexion";
+const authCookieName = "pb_auth";
+
+let errorMessage = "";
+let infoMessage = "";
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const action = String(formData.get("action") ?? "login");
+
+  if (action === "logout") {
+    Astro.cookies.delete(authCookieName, { path: "/" });
+    return Astro.redirect("/connexion");
+  }
+
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+
+  if (!email || !password) {
+    errorMessage = "Email et mot de passe requis.";
+  } else {
+    try {
+      const session = await authenticateUserByEmail(email, password);
+      Astro.cookies.set(authCookieName, session.token, {
+        path: "/",
+        httpOnly: true,
+        sameSite: "lax",
+        secure: Astro.url.protocol === "https:",
+      });
+      return Astro.redirect("/gestion");
+    } catch {
+      errorMessage = "Connexion impossible.";
+    }
+  }
+}
+
+const authToken = Astro.cookies.get(authCookieName)?.value ?? "";
+const session = authToken ? await getAuthenticatedUserByToken(authToken) : null;
+const user = session?.user ?? null;
+
+if (session?.token && session.token !== authToken) {
+  Astro.cookies.set(authCookieName, session.token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: Astro.url.protocol === "https:",
+  });
+}
+
+if (user) {
+  infoMessage = `Connecte en tant que ${user.email ?? user.username ?? "utilisateur"}.`;
+}
+---
+
+
+
+<BaseLayout title={title} description={description}>
+  <Header activePath={currentPath} />
+
+  <main class="contact-page">
+    <section class="section section--wrapper">
+      <h1 class="section__title">Connexion</h1>
+
+      {errorMessage && <p>{errorMessage}</p>}
+      {infoMessage && <p>{infoMessage}</p>}
+
+      {user ? (
+        <>
+          <div style="margin: 2.5rem 0; text-align:center;">
+            <a class="btn" href="/gestion">Aller à la gestion</a>
+          </div>
+          <form class="contact-form" method="post" style="margin-bottom:2.5rem;">
+            <input type="hidden" name="action" value="logout" />
+            <button class="btn contact-form__submit" type="submit">Se déconnecter</button>
+          </form>
+        </>
+      ) : (
+        <>
+          <form class="contact-form" method="post" autocomplete="on" style="margin-bottom:2.5rem;">
+            <input type="hidden" name="action" value="login" />
+            <div class="contact-form__group">
+              <label class="contact-form__label" for="email">Email</label>
+              <input class="contact-form__input" type="email" id="email" name="email" required />
+            </div>
+            <div class="contact-form__group">
+              <label class="contact-form__label" for="password">Mot de passe</label>
+              <input class="contact-form__input" type="password" id="password" name="password" required />
+            </div>
+            <button class="btn contact-form__submit" type="submit">Se connecter</button>
+          </form>
+          <div style="text-align:center; margin-bottom:2.5rem;">
+            <a href="/inscription" style="font-size:1.1em;">Créer un compte</a>
+          </div>
+        </>
+      )}
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

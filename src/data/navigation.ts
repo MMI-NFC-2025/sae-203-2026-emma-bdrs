@@ -11,4 +11,5 @@ export const navItems: NavItem[] = [
   { href: "/scenes", label: "Scènes" },
   { href: "/infos", label: "Infos pratiques" },
   { href: "/contact", label: "Contact" },
+  { href: "/connexion", label: "Connexion" },
 ];

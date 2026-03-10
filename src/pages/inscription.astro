@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { createPocketBaseClient } from "../../backend/backend.mjs";
+
+const title = "Créer un compte - Echos Sonores";
+const description = "Inscription utilisateur (collection users).";
+const currentPath = "/inscription";
+const authCookieName = "pb_auth";
+
+let errorMessage = "";
+let infoMessage = "";
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const email = String(formData.get("email") ?? "").trim();
+  const password = String(formData.get("password") ?? "");
+  const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
+
+  if (!email || !password || !passwordConfirm) {
+    errorMessage = "Tous les champs sont requis.";
+  } else if (password !== passwordConfirm) {
+    errorMessage = "Les mots de passe ne correspondent pas.";
+  } else {
+    try {
+      const pb = createPocketBaseClient();
+      await pb.collection("users").create({ email, password, passwordConfirm });
+      infoMessage = "Compte créé ! Vous pouvez vous connecter.";
+    } catch (e) {
+      errorMessage = "Erreur lors de la création du compte.";
+    }
+  }
+}
+---
+
+<BaseLayout title={title} description={description}>
+  <Header activePath={currentPath} />
+  <main class="contact-page">
+    <section class="section section--wrapper">
+      <h1 class="section__title">Créer un compte</h1>
+      {infoMessage && <p style="color:green">{infoMessage}</p>}
+      {errorMessage && <p style="color:red">{errorMessage}</p>}
+      <form class="contact-form" method="post" style="margin-bottom:2.5rem;">
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="email">Email</label>
+          <input class="contact-form__input" type="email" id="email" name="email" required />
+        </div>
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="password">Mot de passe</label>
+          <input class="contact-form__input" type="password" id="password" name="password" required />
+        </div>
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="passwordConfirm">Confirmer le mot de passe</label>
+          <input class="contact-form__input" type="password" id="passwordConfirm" name="passwordConfirm" required />
+        </div>
+        <button class="btn contact-form__submit" type="submit">Créer mon compte</button>
+      </form>
+      <div style="text-align:center; margin-bottom:2.5rem;">
+        <a href="/connexion" style="font-size:1.1em;">Retour à la connexion</a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

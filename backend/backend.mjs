@@ -1,6 +1,42 @@
 import PocketBase from "pocketbase";
 
-export const pb = new PocketBase("https://festival.badarous.fr");
+export const PB_URL = "https://festival.badarous.fr";
+
+export function createPocketBaseClient() {
+	return new PocketBase(PB_URL);
+}
+
+export const pb = createPocketBaseClient();
+
+export async function authenticateUserByEmail(email, password) {
+	const client = createPocketBaseClient();
+	const authData = await client.collection("users").authWithPassword(email, password);
+
+	return {
+		token: client.authStore.token,
+		user: authData.record,
+	};
+}
+
+export async function getAuthenticatedUserByToken(authToken) {
+	if (!authToken) {
+		return null;
+	}
+
+	const client = createPocketBaseClient();
+	client.authStore.save(authToken, null);
+
+	try {
+		const refreshed = await client.collection("users").authRefresh();
+		return {
+			token: client.authStore.token,
+			user: refreshed.record,
+		};
+	} catch {
+		client.authStore.clear();
+		return null;
+	}
+}
 
 export async function getArtistsSortedByRepresentationDate(collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList();
@@ -50,7 +86,22 @@ export async function getArtistsBySceneNameSortedByDate(sceneName, sceneCollecti
 	return getArtistsBySceneIdSortedByDate(targetScene.id, artistCollection);
 }
 
-export async function saveArtistOrScene(entityType, data, id = null) {
+export async function saveArtistOrScene(entityType, data, optionsOrId = null) {
+	let id = null;
+	let authToken = null;
+
+	if (typeof optionsOrId === "string") {
+		id = optionsOrId;
+	} else if (optionsOrId && typeof optionsOrId === "object") {
+		id = optionsOrId.id ?? null;
+		authToken = optionsOrId.authToken ?? null;
+	}
+
+	const client = createPocketBaseClient();
+	if (authToken) {
+		client.authStore.save(authToken, null);
+	}
+
 	const collection =
 		entityType === "artiste" || entityType === "artist"
 			? "artiste"
@@ -66,8 +117,8 @@ export async function saveArtistOrScene(entityType, data, id = null) {
 	const recordId = id ?? dataId;
 
 	if (recordId) {
-		return pb.collection(collection).update(recordId, payload);
+		return client.collection(collection).update(recordId, payload);
 	}
 
-	return pb.collection(collection).create(payload);
+	return client.collection(collection).create(payload);
 }

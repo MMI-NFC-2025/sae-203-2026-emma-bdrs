@@ -1,0 +1,187 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import {
+  getArtistsSortedByName,
+  getAuthenticatedUserByToken,
+  getScenesSortedByName,
+  saveArtistOrScene,
+} from "../../backend/backend.mjs";
+
+const title = "Gestion - Echos Sonores";
+const description = "Creation et modification des donnees artistes/scenes depuis le front.";
+const currentPath = "/gestion";
+const authCookieName = "pb_auth";
+
+const authToken = Astro.cookies.get(authCookieName)?.value ?? "";
+const session = authToken ? await getAuthenticatedUserByToken(authToken) : null;
+
+if (!session?.user) {
+  Astro.cookies.delete(authCookieName, { path: "/" });
+  return Astro.redirect("/connexion");
+}
+
+if (session.token && session.token !== authToken) {
+  Astro.cookies.set(authCookieName, session.token, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: Astro.url.protocol === "https:",
+  });
+}
+
+let message = "";
+let errorMessage = "";
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const entityType = String(formData.get("entityType") ?? "");
+  const mode = String(formData.get("mode") ?? "create");
+  const recordIdInput = String(formData.get("recordId") ?? "").trim();
+  const recordId = mode === "update" && recordIdInput ? recordIdInput : null;
+
+  try {
+    if (entityType === "artiste") {
+      const dateInput = String(formData.get("date_representation") ?? "").trim();
+      const payload = {
+        nom_artiste: String(formData.get("nom_artiste") ?? "").trim(),
+        date_representation: dateInput ? new Date(dateInput).toISOString() : "",
+        scene: String(formData.get("scene") ?? "").trim(),
+        genre_musical: String(formData.get("genre_musical") ?? "").trim(),
+        description: String(formData.get("description") ?? "").trim(),
+      };
+
+      if (!payload.nom_artiste) {
+        throw new Error("Le nom de l'artiste est requis.");
+      }
+
+      await saveArtistOrScene("artiste", payload, { id: recordId, authToken: session.token });
+      message = recordId ? "Artiste mis a jour." : "Artiste cree.";
+    } else if (entityType === "scene") {
+      const payload = {
+        nom_scene: String(formData.get("nom_scene") ?? "").trim(),
+        description: String(formData.get("scene_description") ?? "").trim(),
+      };
+
+      if (!payload.nom_scene) {
+        throw new Error("Le nom de la scene est requis.");
+      }
+
+      await saveArtistOrScene("scene", payload, { id: recordId, authToken: session.token });
+      message = recordId ? "Scene mise a jour." : "Scene creee.";
+    } else {
+      throw new Error("Type d'entite invalide.");
+    }
+  } catch {
+    errorMessage = "Operation impossible.";
+  }
+}
+
+const [artists, scenes] = await Promise.all([getArtistsSortedByName(), getScenesSortedByName()]);
+---
+
+<BaseLayout title={title} description={description}>
+  <Header activePath={currentPath} />
+
+  <main class="contact-page">
+    <section class="section section--wrapper">
+      <h1 class="section__title">Gestion des donnees</h1>
+
+      <p>Connecte en tant que {session.user.email ?? session.user.username ?? "utilisateur"}</p>
+      {message && <p>{message}</p>}
+      {errorMessage && <p>{errorMessage}</p>}
+
+      <h2>Artiste</h2>
+      <form class="contact-form" method="post">
+        <input type="hidden" name="entityType" value="artiste" />
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="artistMode">Mode</label>
+          <select class="contact-form__input" id="artistMode" name="mode">
+            <option value="create">Creation</option>
+            <option value="update">Mise a jour</option>
+          </select>
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="artistRecordId">ID artiste (update)</label>
+          <input class="contact-form__input" type="text" id="artistRecordId" name="recordId" />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="nom_artiste">Nom artiste</label>
+          <input class="contact-form__input" type="text" id="nom_artiste" name="nom_artiste" required />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="date_representation">Date representation</label>
+          <input class="contact-form__input" type="datetime-local" id="date_representation" name="date_representation" />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="scene">Scene (ID)</label>
+          <input class="contact-form__input" list="scenes-list" id="scene" name="scene" />
+          <datalist id="scenes-list">
+            {scenes.map((scene) => <option value={scene.id}>{scene.nom_scene}</option>)}
+          </datalist>
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="genre_musical">Genre musical</label>
+          <input class="contact-form__input" type="text" id="genre_musical" name="genre_musical" />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="description">Description</label>
+          <textarea class="contact-form__textarea" id="description" name="description" rows="5"></textarea>
+        </div>
+
+        <button class="btn contact-form__submit" type="submit">Valider artiste</button>
+      </form>
+
+      <h2>Scene</h2>
+      <form class="contact-form" method="post">
+        <input type="hidden" name="entityType" value="scene" />
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="sceneMode">Mode</label>
+          <select class="contact-form__input" id="sceneMode" name="mode">
+            <option value="create">Creation</option>
+            <option value="update">Mise a jour</option>
+          </select>
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="sceneRecordId">ID scene (update)</label>
+          <input class="contact-form__input" type="text" id="sceneRecordId" name="recordId" />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="nom_scene">Nom scene</label>
+          <input class="contact-form__input" type="text" id="nom_scene" name="nom_scene" required />
+        </div>
+
+        <div class="contact-form__group">
+          <label class="contact-form__label" for="scene_description">Description scene</label>
+          <textarea class="contact-form__textarea" id="scene_description" name="scene_description" rows="4"></textarea>
+        </div>
+
+        <button class="btn contact-form__submit" type="submit">Valider scene</button>
+      </form>
+
+      <h2>IDs utiles</h2>
+      <p>Scenes:</p>
+      <ul>
+        {scenes.map((scene) => <li>{scene.nom_scene} ({scene.id})</li>)}
+      </ul>
+
+      <p>Artistes:</p>
+      <ul>
+        {artists.map((artist) => <li>{artist.nom_artiste} ({artist.id})</li>)}
+      </ul>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
