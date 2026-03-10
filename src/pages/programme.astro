@@ -1,4 +1,4 @@
-﻿---
+---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
@@ -6,118 +6,72 @@ import Footer from "../components/Footer.astro";
 const title = "Programme — Echos Sonores";
 const description = "Programme complet d'Echos Sonores avec planning des concerts et activites.";
 const currentPath = "/programme";
+
+const dayFilters = ["TOUS", "VEN 10.28", "SAM 10.29", "DIM 10.30", "LUN 10.31"];
+
+const programmeDays = [
+  {
+    date: "28 oct",
+    shows: [
+      "18h — Mystic Echoes (Dub)",
+      "19h30 — Naya & The Vibrations (Fusion)",
+      "21h — Jah Roots Collective (Roots)",
+      "22h30 — BassLine Dub System (Dub)",
+    ],
+  },
+  {
+    date: "29 oct",
+    shows: ["17h30 — Kora Sunlight (Fusion)", "19h — Dub Strikers (Dub)", "21h — Lion Fire Crew (Roots)"],
+  },
+  {
+    date: "30 oct",
+    shows: ["18h — Soul of Irie (Roots)", "20h — Electric Dub Tribe (Fusion)", "22h — Rasta Motion (Roots)"],
+  },
+  {
+    date: "31 oct",
+    shows: ["17h30 — Tribal Echo (Fusion)", "19h — Zion Pulse (Roots)", "21h30 — Midnight Dub Circle (Dub)"],
+  },
+];
 ---
 
-<BaseLayout title={title} description={description} includeLightbox={false}>
+<BaseLayout title={title} description={description}>
 <Header activePath={currentPath} />
     
     <main>
-      <!-- SECTION PROGRAMME -->
       <section class="section section--wrapper programme">
         <header class="section__header programme__header">
-          <p class="programme__kicker">Line-up 2026</p>
           <h1 class="section__title programme__title">Programme</h1>
           <p class="programme__lead">
             Retrouvez la programmation complète d'Echos Sonores: quatre jours de concerts
             reggae, dub et fusion, avec des artistes confirmés et émergents.
           </p>
-          <!-- filtres jours (maquette : TOUS / VEN / SAM / DIM / LUN) -->
           <nav class="programme-filters" aria-label="Filtrer le programme par jour">
-            <button class="programme-filters__btn programme-filters__btn--active" type="button">
-              TOUS
-            </button>
-            <button class="programme-filters__btn" type="button">
-              VEN 10.28
-            </button>
-            <button class="programme-filters__btn" type="button">
-              SAM 10.29
-            </button>
-            <button class="programme-filters__btn" type="button">
-              DIM 10.30
-            </button>
-            <button class="programme-filters__btn" type="button">
-              LUN 10.31
-            </button>
+            {
+              dayFilters.map((filter, index) => (
+                <button class={`programme-filters__btn ${index === 0 ? "programme-filters__btn--active" : ""}`} type="button">
+                  {filter}
+                </button>
+              ))
+            }
           </nav>
         </header>
     
-        <!-- LISTE DES JOURS (cartes rouges avec dégradé) -->
         <div class="programme-days">
     
-          <!-- Jour 1 -->
-          <article class="programme-day" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500">
-            <h2 class="programme-day__title">28 oct</h2>
-    
-            <ul class="programme-day__list u-list-unstyled">
-              <li class="programme-day__item">
-                18h — Mystic Echoes (Dub)
-              </li>
-              <li class="programme-day__item">
-                19h30 — Naya &amp; The Vibrations (Fusion)
-              </li>
-              <li class="programme-day__item">
-                21h — Jah Roots Collective (Roots)
-              </li>
-              <li class="programme-day__item">
-                22h30 — BassLine Dub System (Dub)
-              </li>
-            </ul>
-          </article>
-    
-          <!-- Jour 2 -->
-          <article class="programme-day" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500">
-            <h2 class="programme-day__title">29 oct</h2>
-    
-            <ul class="programme-day__list u-list-unstyled">
-              <li class="programme-day__item">
-                17h30 — Kora Sunlight (Fusion)
-              </li>
-              <li class="programme-day__item">
-                19h — Dub Strikers (Dub)
-              </li>
-              <li class="programme-day__item">
-                21h — Lion Fire Crew (Roots)
-              </li>
-            </ul>
-          </article>
-    
-          <!-- Jour 3 -->
-          <article class="programme-day" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500">
-            <h2 class="programme-day__title">30 oct</h2>
-    
-            <ul class="programme-day__list u-list-unstyled">
-              <li class="programme-day__item">
-                18h — Soul of Irie (Roots)
-              </li>
-              <li class="programme-day__item">
-                20h — Electric Dub Tribe (Fusion)
-              </li>
-              <li class="programme-day__item">
-                22h — Rasta Motion (Roots)
-              </li>
-            </ul>
-          </article>
-    
-          <!-- Jour 4 -->
-          <article class="programme-day" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500">
-            <h2 class="programme-day__title">31 oct</h2>
-    
-            <ul class="programme-day__list u-list-unstyled">
-              <li class="programme-day__item">
-                17h30 — Tribal Echo (Fusion)
-              </li>
-              <li class="programme-day__item">
-                19h — Zion Pulse (Roots)
-              </li>
-              <li class="programme-day__item">
-                21h30 — Midnight Dub Circle (Dub)
-              </li>
-            </ul>
-          </article>
+          {
+            programmeDays.map((day) => (
+              <article class="programme-day" data-aos="fade-down">
+                <h2 class="programme-day__title">{day.date}</h2>
+
+                <ul class="programme-day__list u-list-unstyled">
+                  {day.shows.map((show) => <li class="programme-day__item">{show}</li>)}
+                </ul>
+              </article>
+            ))
+          }
         </div>
     
-        <!-- BOUTON PDF (en bas comme sur la maquette) -->
-        <div class="programme__cta" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500">
+        <div class="programme__cta" data-aos="fade-down">
           <a class="btn btn--light programme__btn" href="/assets/doc/programme-echos-sonore.pdf" target="_blank"
             rel="noopener noreferrer">
             Télécharger programme PDF
@@ -126,12 +80,6 @@ const currentPath = "/programme";
       </section>
     </main>
 
-    
     <Footer />
-
-
-
-
-
 
 </BaseLayout>

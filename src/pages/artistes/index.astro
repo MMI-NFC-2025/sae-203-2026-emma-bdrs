@@ -1,3 +1,50 @@
 ---
-return Astro.redirect("/artistes/artiste");
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import ArtistListItem from "../../components/ArtistListItem.astro";
+import { fetchArtists, fetchScenes, fileUrl } from "../../lib/collections";
+
+const [artists, scenes] = await Promise.all([fetchArtists(), fetchScenes()]);
+const sceneMap = new Map(scenes.map((scene: any) => [scene.id, scene.nom_scene ?? "Scene inconnue"]));
+artists.sort((a: any, b: any) => new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime());
 ---
+
+<BaseLayout
+	title="Artistes - Echos Sonores"
+	description="Tous les artistes Echos Sonores, genres, bios et horaires du festival."
+>
+	<Header activePath="/artistes" />
+
+	<main>
+		<section class="section section--wrapper artists artists--list">
+			<header class="section__header artists__header">
+				<h1 class="section__title artists__title">Les artistes</h1>
+			</header>
+
+			<p class="artists__intro">
+				Découvrez les artistes programmés sur les 4 jours du festival Echos
+				Sonore: roots, dub, reggae fusion et musiques du monde.
+			</p>
+
+			{
+				artists.length === 0 ? (
+					<p>Aucun artiste disponible pour le moment.</p>
+				) : (
+					<ul class="artists-list u-list-unstyled">
+						{artists.map((artist: any, index: number) => (
+							<ArtistListItem
+								artist={artist}
+								sceneName={sceneMap.get(artist.scene) ?? "Scene inconnue"}
+								imageUrl={fileUrl(artist, "photo_principale", "1200x1200")}
+								aosDelay={index * 90}
+							/>
+						))}
+					</ul>
+				)
+			}
+		</section>
+	</main>
+
+	<Footer />
+</BaseLayout>

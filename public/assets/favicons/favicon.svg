@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Favicon Echos Sonore">
-  <rect width="64" height="64" rx="14" fill="#030624"/>
-  <circle cx="32" cy="32" r="20" fill="#da261c"/>
-  <path d="M21 32h22M21 26h14M21 38h14" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-</svg>
+<svg width="75" height="80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" width="9" height="80" rx="4.5" fill="#DA261C"/><rect y="25" width="9" height="30" rx="4.5" fill="#DA261C"/><rect x="17" y="12" width="8" height="57" rx="4" fill="#DA261C"/><rect x="66" y="25" width="9" height="30" rx="4.5" fill="#0C1E5B"/><rect x="50" y="12" width="8" height="57" rx="4" fill="#0C1E5B"/></svg>

@@ -7,24 +7,62 @@ import {
   getScenesSortedByName,
 } from "../../backend/backend.mjs";
 
+function logPocketBaseError(scope: string, error: any) {
+  const message = error?.message ?? "Unknown PocketBase error";
+  console.warn(`[PocketBase:${scope}] ${message}`);
+}
+
+function isClientError(error: any, status: number) {
+  return Number(error?.status) === status;
+}
+
 export async function fetchArtists() {
-  return getArtistsSortedByRepresentationDate();
+  try {
+    return await getArtistsSortedByRepresentationDate();
+  } catch (error) {
+    logPocketBaseError("fetchArtists", error);
+    return [];
+  }
 }
 
 export async function fetchScenes() {
-  return getScenesSortedByName();
+  try {
+    return await getScenesSortedByName();
+  } catch (error) {
+    logPocketBaseError("fetchScenes", error);
+    return [];
+  }
 }
 
 export async function fetchArtistById(id: string) {
-  return getArtistById(id);
+  try {
+    return await getArtistById(id);
+  } catch (error) {
+    if (!isClientError(error, 404) && !isClientError(error, 403)) {
+      logPocketBaseError("fetchArtistById", error);
+    }
+    return null;
+  }
 }
 
 export async function fetchSceneById(id: string) {
-  return getSceneById(id);
+  try {
+    return await getSceneById(id);
+  } catch (error) {
+    if (!isClientError(error, 404) && !isClientError(error, 403)) {
+      logPocketBaseError("fetchSceneById", error);
+    }
+    return null;
+  }
 }
 
 export async function fetchArtistsBySceneId(sceneId: string) {
-  return getArtistsBySceneIdSortedByDate(sceneId);
+  try {
+    return await getArtistsBySceneIdSortedByDate(sceneId);
+  } catch (error) {
+    logPocketBaseError("fetchArtistsBySceneId", error);
+    return [];
+  }
 }
 
 export function dateLabel(dateRaw?: string) {

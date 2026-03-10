@@ -1,15 +1,15 @@
 ---
 import "../styles/global.css";
+import faviconSvgUrl from "../assets/favicons/favicon.svg?url";
 
 interface Props {
   title: string;
   description?: string;
-  includeLightbox?: boolean;
 }
 
-const { title, description = "Echos Sonores", includeLightbox = false } = Astro.props;
+const { title, description = "Echos Sonores" } = Astro.props;
 const pageUrl = Astro.url.href;
-const pageImage = "/assets/favicons/favicon.svg";
+const pageImage = faviconSvgUrl;
 ---
 
 <!doctype html>
@@ -31,7 +31,7 @@ const pageImage = "/assets/favicons/favicon.svg";
     <meta name="twitter:image" content={pageImage} />
     <link rel="canonical" href={pageUrl} />
     <title>{title}</title>
-    <link rel="icon" type="image/svg+xml" href="/assets/favicons/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href={faviconSvgUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -41,16 +41,257 @@ const pageImage = "/assets/favicons/favicon.svg";
   </head>
   <body>
     <slot />
-    <script type="module">
-      import "/src/js/menu.js";
-      import "/src/js/carousel.js";
-      import "/src/js/faq.js";
-      import "/src/js/scroll-animations.js";
+    <script is:inline>
+      (() => {
+        const onReady = (fn) => {
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", fn, { once: true });
+            return;
+          }
+          fn();
+        };
+
+        const togglePanel = (buttonSelector, iconSelector) => {
+          document.querySelectorAll(buttonSelector).forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const open = btn.getAttribute("aria-expanded") !== "true";
+              btn.setAttribute("aria-expanded", String(open));
+              const panel = btn.nextElementSibling;
+              if (!panel) return;
+
+              if (open) {
+                panel.hidden = false;
+                void panel.offsetHeight;
+                panel.classList.add("is-open");
+              } else {
+                panel.classList.remove("is-open");
+                panel.addEventListener(
+                  "transitionend",
+                  () => {
+                    if (!panel.classList.contains("is-open")) {
+                      panel.hidden = true;
+                    }
+                  },
+                  { once: true }
+                );
+              }
+
+              if (iconSelector) {
+                const icon = btn.querySelector(iconSelector);
+                if (icon) {
+                  icon.textContent = open ? "–" : "+";
+                }
+              }
+            });
+          });
+        };
+
+        const initMenu = () => {
+          const menuBtn = document.querySelector(".header__menu-btn");
+          const menu = document.getElementById("mainNav");
+          if (!menuBtn || !menu) return;
+
+          const setState = (open) => {
+            menu.classList.toggle("menu--open", open);
+            menuBtn.classList.toggle("menu-btn--open", open);
+            menuBtn.setAttribute("aria-expanded", String(open));
+            document.body.classList.toggle("has-menu-open", open);
+            document.body.classList.toggle("u-noscroll", open);
+          };
+
+          const close = () => {
+            setState(false);
+            menu.addEventListener(
+              "transitionend",
+              () => {
+                if (!menu.classList.contains("menu--open")) {
+                  menu.hidden = true;
+                }
+              },
+              { once: true }
+            );
+          };
+
+          menuBtn.addEventListener("click", () => {
+            const open = !menu.classList.contains("menu--open");
+            if (open) {
+              menu.hidden = false;
+              requestAnimationFrame(() => setState(true));
+            } else {
+              close();
+            }
+          });
+
+          menu.addEventListener("click", (event) => {
+            if (event.target.closest(".menu__link")) close();
+          });
+
+          window.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && menu.classList.contains("menu--open")) close();
+          });
+        };
+
+        const initCarousel = () => {
+          document.querySelectorAll(".carousel").forEach((carousel) => {
+            const track = carousel.querySelector(".carousel__track");
+            const slides = track ? Array.from(track.querySelectorAll(".carousel__slide")) : [];
+            const prev = carousel.querySelector(".carousel__button--prev");
+            const next = carousel.querySelector(".carousel__button--next");
+            if (!track || slides.length === 0) return;
+            let index = 0;
+            const update = () => {
+              track.style.transform = `translateX(${-index * 100}%)`;
+            };
+            if (next) {
+              next.addEventListener("click", () => {
+                index = (index + 1) % slides.length;
+                update();
+              });
+            }
+            if (prev) {
+              prev.addEventListener("click", () => {
+                index = (index - 1 + slides.length) % slides.length;
+                update();
+              });
+            }
+            update();
+          });
+        };
+
+        const initLightbox = () => {
+          const lightbox = document.getElementById("lightbox");
+          const lightboxImg = lightbox?.querySelector(".lightbox__img");
+          const closeBtn = document.getElementById("closeLightbox");
+          const prevBtn = document.getElementById("prevImg");
+          const nextBtn = document.getElementById("nextImg");
+          const counter = document.getElementById("imageCounter");
+          const images = Array.from(document.querySelectorAll(".artist-gallery__img"));
+          if (!lightbox || !lightboxImg || !closeBtn || !prevBtn || !nextBtn || !counter || images.length === 0) return;
+
+          let index = 0;
+          const show = () => {
+            lightboxImg.src = images[index].src;
+            lightboxImg.alt = images[index].alt;
+            counter.textContent = `${index + 1} / ${images.length}`;
+            lightbox.classList.add("active");
+            document.body.style.overflow = "hidden";
+          };
+          const close = () => {
+            lightbox.classList.remove("active");
+            document.body.style.overflow = "auto";
+          };
+
+          images.forEach((img, i) => img.addEventListener("click", () => {
+            index = i;
+            show();
+          }));
+
+          closeBtn.addEventListener("click", close);
+          nextBtn.addEventListener("click", () => {
+            index = (index + 1) % images.length;
+            show();
+          });
+          prevBtn.addEventListener("click", () => {
+            index = (index - 1 + images.length) % images.length;
+            show();
+          });
+
+          lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox) close();
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (!lightbox.classList.contains("active")) return;
+            if (e.key === "Escape") close();
+            if (e.key === "ArrowRight") {
+              index = (index + 1) % images.length;
+              show();
+            }
+            if (e.key === "ArrowLeft") {
+              index = (index - 1 + images.length) % images.length;
+              show();
+            }
+          });
+        };
+
+        const initAos = () => {
+          const nodes = Array.from(document.querySelectorAll("[data-aos]"));
+          if (nodes.length === 0) return;
+          let lastScrollY = window.scrollY;
+
+          nodes.forEach((node) => {
+            const duration = node.getAttribute("data-aos-duration");
+            const delay = node.getAttribute("data-aos-delay");
+            const easing = node.getAttribute("data-aos-easing");
+
+            if (duration) {
+              let normalized = duration;
+              if (/^\d+$/.test(duration)) {
+                const scaled = Math.max(160, Math.round(Number(duration) * 0.6));
+                normalized = `${scaled}ms`;
+              }
+              node.style.setProperty("--aos-duration", normalized);
+            }
+
+            if (delay) {
+              let normalized = delay;
+              if (/^\d+$/.test(delay)) {
+                normalized = `${Math.round(Number(delay) * 0.65)}ms`;
+              }
+              node.style.setProperty("--aos-delay", normalized);
+            }
+
+            if (easing) {
+              node.style.setProperty("--aos-easing", easing);
+            }
+          });
+
+          if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            nodes.forEach((node) => node.classList.add("aos-animate"));
+            return;
+          }
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              const currentScrollY = window.scrollY;
+              const direction = currentScrollY >= lastScrollY ? "down" : "up";
+              lastScrollY = currentScrollY;
+
+              entries.forEach((entry) => {
+                const node = entry.target;
+                if (direction === "down") {
+                  node.classList.remove("aos-no-motion");
+                  if (entry.isIntersecting) {
+                    node.classList.add("aos-animate");
+                  } else {
+                    node.classList.remove("aos-animate");
+                  }
+                  return;
+                }
+
+                node.classList.add("aos-no-motion");
+                if (entry.isIntersecting) {
+                  node.classList.add("aos-animate");
+                } else {
+                  node.classList.remove("aos-animate");
+                }
+              });
+            },
+            { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+          );
+
+          nodes.forEach((node) => observer.observe(node));
+        };
+
+        onReady(() => {
+          initMenu();
+          initCarousel();
+          togglePanel(".heb__btn");
+          togglePanel(".faq__question", ".faq__icon");
+          initAos();
+          initLightbox();
+        });
+      })();
     </script>
-    {includeLightbox && (
-      <script type="module">
-        import "/src/js/lightbox.js";
-      </script>
-    )}
   </body>
 </html>

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { photos } from "../../data/photos.ts";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import { concertLabel, fetchArtistsBySceneId, fetchSceneById, fileUrl } from "../../lib/collections";
@@ -12,41 +11,62 @@ if (!scene) {
 }
 
 const artists = await fetchArtistsBySceneId(id);
-const sceneImage = fileUrl(scene, "photos", "1400x900") || photos.scene1.src;
+const sceneImage = fileUrl(scene, "photos", "1400x900");
+const sceneName = scene.nom_scene ?? "Scene";
+const sceneDescription = scene.description ?? "Description indisponible.";
+
+const lineupArtists = artists.map((artist: any) => ({
+  id: artist.id,
+  name: artist.nom_artiste ?? "Artiste",
+  date: concertLabel(artist.date_representation).split(" - ")[0],
+}));
 ---
 
-<BaseLayout title={`${scene.nom_scene} - Echos Sonores`} description="Detail scene" includeLightbox={false}>
+<BaseLayout title={`${sceneName} - Echos Sonores`} description="Detail scene">
 	<Header activePath="/scenes" />
-	<main>
-		<button class="back-btn" type="button" onclick="window.history.back()" data-aos="fade-right" data-aos-duration="800">
-			<span aria-hidden="true">←</span>
-			<span class="u-sr-only">Retour aux scenes</span>
-		</button>
+	<main class="scene-page-wrap">
+		<section class="section section--wrapper scene-page">
+			<button class="scene-page__back-btn" type="button" onclick="window.history.back()">
+				<span aria-hidden="true">←</span>
+				<span class="u-sr-only">Retour aux scenes</span>
+			</button>
 
-		<section class="section section--wrapper scene-page" data-aos="fade-up" data-aos-duration="1000">
-			<h1 class="scene-page__title">{scene.nom_scene}</h1>
+			<header class="scene-page__header">
+				<h1 class="scene-page__title">{sceneName}</h1>
+			</header>
 
-			<img class="scene-page__img" src={sceneImage} alt={`Photo de ${scene.nom_scene}`} loading="lazy" />
+			{sceneImage ? (
+				<img class="scene-page__img" src={sceneImage} alt={`Photo de ${sceneName}`} loading="lazy" />
+			) : (
+				<div class="scene-page__img">Aucune image disponible</div>
+			)}
 
-			<p class="scene-page__text">{scene.description ?? "Description indisponible."}</p>
+			<div class="scene-page__panels">
+				<p class="scene-page__text">{sceneDescription}</p>
 
-			<h2 class="scene-page__subtitle">Artistes programmés :</h2>
+				<h2 class="scene-page__subtitle">Artistes programmés :</h2>
+				<section class="scene-page__lineup">
+					<ul class="scene-artists u-list-unstyled">
+						{lineupArtists.length === 0 ? (
+							<li class="scene-artists__item">Aucun artiste programme.</li>
+						) : (
+							lineupArtists.map((artist) => (
+								<li class="scene-artists__item">
+									<a class="scene-page__artist-link" href={`/artistes/${artist.id}`}>
+										{artist.name} - {artist.date}
+									</a>
+								</li>
+							))
+						)}
+					</ul>
+				</section>
+			</div>
 
-			<ul class="scene-artists u-list-unstyled" data-aos="fade-up" data-aos-duration="900" data-aos-delay="120">
-				{artists.length === 0 ? (
-					<li class="scene-artists__item">Aucun artiste programme.</li>
-				) : (
-					artists.map((artist: any) => (
-						<li class="scene-artists__item">
-							{artist.nom_artiste ?? "Artiste"} - {concertLabel(artist.date_representation).split(" - ")[0]}
-						</li>
-					))
-				)}
-			</ul>
-
-			<a class="btn scene-page__cta" href="/artistes" data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-				Voir tous les Artistes
-			</a>
+			<div class="scene-page__actions">
+				<a class="btn scene-page__cta" href="/artistes">
+					Voir tous les Artistes
+				</a>
+			</div>
 		</section>
 	</main>
 	<Footer />

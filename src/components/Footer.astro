@@ -1,13 +1,8 @@
 ---
-const navItems = [
-  { href: "/", label: "Accueil" },
-  { href: "/festival", label: "Le Festival" },
-  { href: "/programme", label: "Programme" },
-  { href: "/artistes", label: "Artistes" },
-  { href: "/scenes", label: "Scènes" },
-  { href: "/infos", label: "Infos pratiques" },
-  { href: "/contact", label: "Contact" },
-];
+import { navItems } from "../data/navigation";
+import instagramIconUrl from "../assets/icons/instagram-alt.svg?url";
+import facebookIconUrl from "../assets/icons/facebook.svg?url";
+import tiktokIconUrl from "../assets/icons/tiktok.svg?url";
 ---
 
 <footer class="footer">
@@ -47,17 +42,17 @@ const navItems = [
       <ul class="footer__social-list u-list-unstyled">
         <li>
           <a class="footer__link" href="#" aria-label="Instagram">
-            <img src="/assets/icons/instagram-alt.svg" alt="" class="footer__social-icon" loading="lazy" />
+            <img src={instagramIconUrl} alt="" class="footer__social-icon" loading="lazy" />
           </a>
         </li>
         <li>
           <a class="footer__link" href="#" aria-label="Facebook">
-            <img src="/assets/icons/facebook.svg" alt="" class="footer__social-icon" loading="lazy" />
+            <img src={facebookIconUrl} alt="" class="footer__social-icon" loading="lazy" />
           </a>
         </li>
         <li>
           <a class="footer__link" href="#" aria-label="TikTok">
-            <img src="/assets/icons/tiktok.svg" alt="" class="footer__social-icon" loading="lazy" />
+            <img src={tiktokIconUrl} alt="" class="footer__social-icon" loading="lazy" />
           </a>
         </li>
       </ul>

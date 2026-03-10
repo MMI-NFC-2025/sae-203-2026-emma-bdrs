@@ -1,0 +1,23 @@
+---
+import ImagePB from "./ImagePB.astro";
+const { project, aosDelay = 0 } = Astro.props;
+---
+
+<li data-aos="fade-up" data-aos-duration="900" data-aos-delay={aosDelay}>
+  <article class="overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-lg shadow-black/25 transition-transform duration-200 hover:-translate-y-1">
+    <a href={project.href} class="block md:grid md:grid-cols-[180px,1fr] md:items-stretch">
+      <ImagePB
+        src={project.imageSrc}
+        alt={project.imageAlt ?? project.title}
+        className="h-48 w-full object-cover md:h-full"
+        loading="lazy"
+        fallbackLabel="Image PocketBase indisponible"
+      />
+      <div class="space-y-2 p-4 md:p-5">
+        <h3 class="text-xl font-bold text-white">{project.title}</h3>
+        {project.subtitle && <p class="text-sm text-rose-400">{project.subtitle}</p>}
+        {project.meta && <p class="text-sm text-slate-200">{project.meta}</p>}
+      </div>
+    </a>
+  </article>
+</li>

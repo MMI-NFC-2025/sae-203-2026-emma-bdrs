@@ -1,32 +1,35 @@
 ---
-interface NavItem {
-  href: string;
-  label: string;
-}
-
 interface Props {
   activePath?: string;
 }
 
 const { activePath = "/" } = Astro.props;
 
-const navItems: NavItem[] = [
-  { href: "/", label: "Accueil" },
-  { href: "/festival", label: "Le Festival" },
-  { href: "/programme", label: "Programme" },
-  { href: "/artistes", label: "Artistes" },
-  { href: "/scenes", label: "Scènes" },
-  { href: "/infos", label: "Infos pratiques" },
-  { href: "/contact", label: "Contact" },
-];
+import { navItems } from "../data/navigation";
+import logoLightUrl from "../assets/icons/logo-light.svg?url";
+import instagramIconUrl from "../assets/icons/instagram-alt.svg?url";
+import facebookIconUrl from "../assets/icons/facebook.svg?url";
+import tiktokIconUrl from "../assets/icons/tiktok.svg?url";
 
 const isActive = (href: string) => activePath === href;
 ---
 
 <header class="header">
   <a class="header__link" href="/">
-    <img class="header__logo" src="/assets/icons/logo-light.svg" alt="Logo du festival Echos Sonore" />
+    <img class="header__logo" src={logoLightUrl} alt="Logo du festival Echos Sonore" />
   </a>
+
+  <nav class="header__desktop-nav" aria-label="Navigation principale">
+    <ul class="header__desktop-list u-list-unstyled">
+      {navItems.map((item) => (
+        <li class="header__desktop-item">
+          <a class={`header__desktop-link ${isActive(item.href) ? "header__desktop-link--active" : ""}`.trim()} href={item.href}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
 
   <button class="header__menu-btn menu-btn" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mainNav">
     <span class="menu-btn__bar menu-btn__bar--top" aria-hidden="true"></span>
@@ -47,18 +50,18 @@ const isActive = (href: string) => activePath === href;
 
     <ul class="menu__social-list u-list-unstyled">
       <li class="menu__social-item">
-        <a class="menu__social-link" href="#" aria-label="Facebook">
-          <img src="/assets/icons/facebook.svg" alt="facebook-icon" class="menu__social-icon" loading="lazy" />
+        <a class="menu__social-link" href="#" aria-label="Instagram">
+          <img src={instagramIconUrl} alt="instagram-icon" class="menu__social-icon" loading="lazy" />
         </a>
       </li>
       <li class="menu__social-item">
-        <a class="menu__social-link" href="#" aria-label="Instagram">
-          <img src="/assets/icons/instagram-alt.svg" alt="instagram-icon" class="menu__social-icon" loading="lazy" />
+        <a class="menu__social-link" href="#" aria-label="Facebook">
+          <img src={facebookIconUrl} alt="facebook-icon" class="menu__social-icon" loading="lazy" />
         </a>
       </li>
       <li class="menu__social-item">
         <a class="menu__social-link" href="#" aria-label="TikTok">
-          <img src="/assets/icons/tiktok.svg" alt="tiktok-icon" class="menu__social-icon" loading="lazy" />
+          <img src={tiktokIconUrl} alt="tiktok-icon" class="menu__social-icon" loading="lazy" />
         </a>
       </li>
     </ul>

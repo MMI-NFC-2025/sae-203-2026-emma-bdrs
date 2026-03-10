@@ -1,3 +1,62 @@
 ---
-return Astro.redirect("/scenes/scene");
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import SceneListItem from "../../components/SceneListItem.astro";
+import { fetchScenes, fileUrl } from "../../lib/collections";
+
+const title = "Scenes - Echos Sonores";
+const description = "Vue d'ensemble des scenes du festival Echos Sonores et des univers proposes.";
+const currentPath = "/scenes";
+const scenes = await fetchScenes();
+
+const sceneOrder = ["roots", "dub", "fusion"];
+const normalizeSceneName = (value: string) =>
+	value
+		.toLowerCase()
+		.normalize("NFD")
+		.replace(/[\u0300-\u036f]/g, "");
+
+const orderedScenes = [...scenes].sort((a: any, b: any) => {
+	const aName = normalizeSceneName(a?.nom_scene ?? "");
+	const bName = normalizeSceneName(b?.nom_scene ?? "");
+
+	const aIndex = sceneOrder.findIndex((token) => aName.includes(token));
+	const bIndex = sceneOrder.findIndex((token) => bName.includes(token));
+	const aRank = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex;
+	const bRank = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex;
+
+	if (aRank !== bRank) return aRank - bRank;
+	return aName.localeCompare(bName, "fr");
+});
 ---
+
+<BaseLayout title={title} description={description}>
+	<Header activePath={currentPath} />
+
+	<main>
+		<section class="section section--wrapper scenes">
+			<header class="section__header scenes__header">
+				<h1 class="section__title scenes__title">Les Scenes du Echos Sonores</h1>
+			</header>
+
+			{
+				orderedScenes.length === 0 ? (
+					<p>Aucune scene disponible.</p>
+				) : (
+					<ul class="scenes-list u-list-unstyled">
+						{orderedScenes.map((scene: any, index: number) => (
+							<SceneListItem
+								scene={scene}
+								imageUrl={fileUrl(scene, "photos", "1400x1400")}
+								aosDelay={index * 110}
+							/>
+						))}
+					</ul>
+				)
+			}
+		</section>
+	</main>
+
+	<Footer />
+</BaseLayout>

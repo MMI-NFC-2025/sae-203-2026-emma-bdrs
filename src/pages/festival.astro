@@ -8,21 +8,31 @@ import Footer from "../components/Footer.astro";
 const title = "Festival — Echos Sonores";
 const description = "Decouvrez le festival Echos Sonores : concept, valeurs et experience proposee.";
 const currentPath = "/festival";
+
+const festivalParagraphs = [
+  "Echos Sonore est un nouveau festival de musiques actuelles dédié à la culture reggae. L’édition inaugurale se déroulera du 28 au 31 octobre 2026, à Audincourt, sur un site en plein air pouvant accueillir jusqu’à 3 000 personnes par jour.",
+  "Conçu comme un rendez-vous automnal pendant les vacances universitaires, le festival propose une ambiance immersive inspirée d’Halloween, mêlant lumières, décors et scénographie nocturne.",
+  "Le festival veut offrir une expérience conviviale, à taille humaine, où se rencontrent artistes, public, innovation locale et engagement citoyen.",
+];
+
+const teamMembers = [
+  { src: photos.staff1, alt: "Membre de l'équipe Echos Sonores 1" },
+  { src: photos.staff2, alt: "Membre de l'équipe Echos Sonores 2" },
+  { src: photos.staff3, alt: "Membre de l'équipe Echos Sonores 3" },
+  { src: photos.staff4, alt: "Membre de l'équipe Echos Sonores 4" },
+];
 ---
 
-<BaseLayout title={title} description={description} includeLightbox={false}>
+<BaseLayout title={title} description={description}>
 <Header activePath={currentPath} />
     
     <main>
-      <!-- HERO IMAGE (FEU D'ARTIFICE) -->
       <section class="festival-hero">
         <Image class="festival-hero__img" src={photos.festival}
           alt="Feu d'artifice au-dessus d'une scène de concert" loading="lazy" />
       </section>
     
-      <!-- CONTENU LE FESTIVAL -->
-      <section class="section section--wrapper festival" data-aos="fade-up"
-     data-aos-duration="3000">
+      <section class="section section--wrapper festival" data-aos="fade-up">
         <header class="section__header festival__header">
           <h1 class="section__title festival__title">
             Le FESTIVAL ECHOS SONORES
@@ -30,29 +40,10 @@ const currentPath = "/festival";
         </header>
     
         <div class="festival__content" data-aos="fade-up">
-          <p>
-            Echos Sonore est un nouveau festival de musiques actuelles
-            dédié à la culture reggae. L’édition inaugurale se déroulera
-            du 28 au 31 octobre 2026, à Audincourt, sur un site en plein
-            air pouvant accueillir jusqu’à 3&nbsp;000 personnes par jour.
-          </p>
-    
-          <p>
-            Conçu comme un rendez-vous automnal pendant les vacances
-            universitaires, le festival propose une ambiance immersive
-            inspirée d’Halloween, mêlant lumières, décors et scénographie
-            nocturne.
-          </p>
-    
-          <p>
-            Le festival veut offrir une expérience conviviale, à taille
-            humaine, où se rencontrent artistes, public, innovation locale
-            et engagement citoyen.
-          </p>
+          {festivalParagraphs.map((paragraph) => <p>{paragraph}</p>)}
         </div>
       </section>
     
-        <!-- NOTRE ÉQUIPE (carrousel 4 images) -->
         <section class="section section--wrapper festival-team">
           <header class="section__header">
             <h2 class="section__title">
@@ -64,22 +55,13 @@ const currentPath = "/festival";
             <div class="carousel__track-wrapper">
               <div class="carousel__viewport">
                 <ul class="carousel__track u-list-unstyled">
-                  <li class="carousel__slide team-carousel__slide">
-                    <Image class="team-carousel__photo" src={photos.staff1}
-                      alt="Membre de l'équipe Echos Sonores 1" loading="lazy" />
-                  </li>
-                  <li class="carousel__slide team-carousel__slide">
-                    <Image class="team-carousel__photo" src={photos.staff2}
-                      alt="Membre de l'équipe Echos Sonores 2" loading="lazy" />
-                  </li>
-                  <li class="carousel__slide team-carousel__slide">
-                    <Image class="team-carousel__photo" src={photos.staff3}
-                      alt="Membre de l'équipe Echos Sonores 3" loading="lazy" />
-                  </li>
-                  <li class="carousel__slide team-carousel__slide">
-                    <Image class="team-carousel__photo" src={photos.staff4}
-                      alt="Membre de l'équipe Echos Sonores 4" loading="lazy" />
-                  </li>
+                  {
+                    teamMembers.map((member) => (
+                      <li class="carousel__slide team-carousel__slide">
+                        <Image class="team-carousel__photo" src={member.src} alt={member.alt} loading="lazy" />
+                      </li>
+                    ))
+                  }
                 </ul>
               </div>
             </div>

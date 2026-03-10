@@ -1,20 +1,19 @@
-﻿---
+---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
-const title = "Contact — Echos Sonores";
+const title = "Contact - Echos Sonores";
 const description = "Coordonnees et formulaire pour contacter l'equipe du festival Echos Sonores.";
 const currentPath = "/contact";
 ---
 
-<BaseLayout title={title} description={description} includeLightbox={false}>
+<BaseLayout title={title} description={description}>
 <Header activePath={currentPath} />
       
       <main class="contact-page">
         <section class="section section--wrapper">
           <h1 class="section__title contact">Contact</h1>
-          <!-- FORMULAIRE -->
           <form class="contact-form" action="#" method="post" autocomplete="on">
             <div class="contact-form__group">
               <label class="contact-form__label u-sr-only" for="name">

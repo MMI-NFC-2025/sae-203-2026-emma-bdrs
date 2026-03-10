@@ -8,163 +8,144 @@ import Footer from "../components/Footer.astro";
 const title = "Infos pratiques — Echos Sonores";
 const description = "Infos pratiques du festival Echos Sonores : tarifs, acces, transports et FAQ.";
 const currentPath = "/infos";
+
+const tarifs = ["Pass 3 jours : 89 €", "Pass 1 jour : 35 €", "Étudiant : -20 %", "<12 ans : Gratuit"];
+
+const hebergements = [
+  {
+    image: photos.hotel,
+    alt: "Photo hôtel",
+    label: "Hôtels & Auberges",
+    lines: ["Plusieurs hôtels et auberges situés à Audincourt et Montbéliard.", "Navette festival disponible."],
+  },
+  {
+    image: photos.camping,
+    alt: "Photo camping",
+    label: "Camping",
+    lines: ["Camping surveillé à proximité.", "Douches, sanitaires, zones ombragées."],
+  },
+  {
+    image: photos.chezHabitant,
+    alt: "Hébergement chez l'habitant",
+    label: "Hébergements chez l'habitant",
+    lines: ["Plateformes d’hébergement local recommandées.", "Accueil chaleureux garanti !"],
+  },
+];
+
+const transports = [
+  {
+    title: "En train",
+    lines: ["Gare la plus proche : Montbéliard", "Correspondance bus direction Audincourt (15 min)"],
+  },
+  {
+    title: "En voiture",
+    lines: ["Parkings gratuits autour du site", "Zones “dépose-minute”"],
+  },
+  {
+    title: "Covoiturage",
+    lines: ["Plateforme recommandée : Blablacar", "Zone “Covoiturage Festival” près de l’entrée"],
+  },
+  {
+    title: "Mobilité douce",
+    lines: ["Pistes cyclables jusqu’au site", "Parking vélo surveillé"],
+  },
+];
+
+const faqItems = [
+  {
+    question: "Puis-je sortir et revenir ?",
+    answer: "Oui, à condition de garder votre bracelet.",
+  },
+  {
+    question: "Les sacs sont-ils autorisés ?",
+    answer: "Les petits sacs sont autorisés, contrôlés à l’entrée.",
+  },
+  {
+    question: "Le festival est-il accessible PMR ?",
+    answer: "Oui, zones accessibles + assistance disponible.",
+  },
+  {
+    question: "Puis-je apporter de la nourriture ?",
+    answer: "Oui, mais boissons en bouteille interdites.",
+  },
+  {
+    question: "Y a-t-il des stands de restauration ?",
+    answer: "Oui, plusieurs food trucks et stands locaux.",
+  },
+];
 ---
 
-<BaseLayout title={title} description={description} includeLightbox={false}>
+<BaseLayout title={title} description={description}>
 <Header activePath={currentPath} />
   
   <main class="infos-page section section--wrapper">
-    <!-- TITRE -->
     <h1 class="section__title">Infos pratiques</h1>
   
-    <!-- TARIFS -->
     <section class="infos-section">
       <h3 class="infos-section__title">Tarifs</h3>
   
       <ul class="tarifs-list u-list-unstyled">
-        <li class="tarifs-item">Pass 3 jours : 89 €</li>
-        <li class="tarifs-item">Pass 1 jour : 35 €</li>
-        <li class="tarifs-item">Étudiant : -20 %</li>
-        <li class="tarifs-item">&lt;12 ans : Gratuit</li>
+        {tarifs.map((item) => <li class="tarifs-item" set:html={item} />)}
       </ul>
     </section>
   
-    <!-- HEBERGEMENTS -->
     <section class="infos-section">
       <h3 class="infos-section__title">Hébergements</h3>
   
-      <!-- ITEM 1 -->
-      <article class="heb">
-        <button class="heb__btn" aria-expanded="false">
-          <Image class="heb__img" src={photos.hotel} alt="Photo hôtel" />
-          <span class="heb__label">Hôtels & Auberges</span>
-          <span class="heb__icon">▼</span>
-        </button>
-  
-        <div class="heb__content" hidden>
-          <p>
-            Plusieurs hôtels et auberges situés à Audincourt et Montbéliard.
-            <br />Navette festival disponible.
-          </p>
-        </div>
-      </article>
-  
-      <!-- ITEM 2 -->
-      <article class="heb">
-        <button class="heb__btn" aria-expanded="false">
-          <Image class="heb__img" src={photos.camping} alt="Photo camping" />
-          <span class="heb__label">Camping</span>
-          <span class="heb__icon">▼</span>
-        </button>
-  
-        <div class="heb__content" hidden>
-          <p>
-            Camping surveillé à proximité.
-            <br />Douches, sanitaires, zones ombragées.
-          </p>
-        </div>
-      </article>
-  
-      <!-- ITEM 3 -->
-      <article class="heb">
-        <button class="heb__btn" aria-expanded="false">
-          <Image class="heb__img" src={photos.chezHabitant} alt="Hébergement chez l'habitant" />
-          <span class="heb__label">Hébergements chez l'habitant</span>
-          <span class="heb__icon">▼</span>
-        </button>
-  
-        <div class="heb__content" hidden>
-          <p>
-            Plateformes d’hébergement local recommandées.
-            <br />Accueil chaleureux garanti !
-          </p>
-        </div>
-      </article>
+      {
+        hebergements.map((item) => (
+          <article class="heb">
+            <button class="heb__btn" aria-expanded="false">
+              <Image class="heb__img" src={item.image} alt={item.alt} />
+              <span class="heb__label">{item.label}</span>
+              <span class="heb__icon">▼</span>
+            </button>
+
+            <div class="heb__content" hidden>
+              <p>
+                {item.lines[0]}
+                <br />
+                {item.lines[1]}
+              </p>
+            </div>
+          </article>
+        ))
+      }
     </section>
   
-    <!-- TRANSPORT -->
     <section class="infos-section">
       <h3 class="infos-section__title">Transport</h3>
   
-      <p>
-        <strong>En train</strong><br />
-        Gare la plus proche : Montbéliard<br />
-        Correspondance bus direction Audincourt (15 min)
-      </p>
-  
-      <p>
-        <strong>En voiture</strong><br />
-        Parkings gratuits autour du site<br />
-        Zones “dépose-minute”
-      </p>
-  
-      <p>
-        <strong>Covoiturage</strong><br />
-        Plateforme recommandée : Blablacar<br />
-        Zone “Covoiturage Festival” près de l’entrée
-      </p>
-  
-      <p>
-        <strong>Mobilité douce</strong><br />
-        Pistes cyclables jusqu’au site<br />
-        Parking vélo surveillé
-      </p>
+      {
+        transports.map((item) => (
+          <p>
+            <strong>{item.title}</strong>
+            <br />
+            {item.lines[0]}
+            <br />
+            {item.lines[1]}
+          </p>
+        ))
+      }
     </section>
   
-    <!-- FAQ -->
     <section class="infos-section">
       <h3 class="infos-section__title">FAQ</h3>
   
-      <ul class="faq u-list-unstyled" data-aos="fade-up" data-aos-easing="linear" data-aos-duration="1500">
-        <li class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span> Puis-je sortir et revenir ? </span>
-            <span class="faq__icon">+</span>
-          </button>
-          <div class="faq__answer" hidden>
-            <p>Oui, à condition de garder votre bracelet.</p>
-          </div>
-        </li>
-  
-        <li class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span> Les sacs sont-ils autorisés ? </span>
-            <span class="faq__icon">+</span>
-          </button>
-          <div class="faq__answer" hidden>
-            <p>Les petits sacs sont autorisés, contrôlés à l’entrée.</p>
-          </div>
-        </li>
-  
-        <li class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span> Le festival est-il accessible PMR ? </span>
-            <span class="faq__icon">+</span>
-          </button>
-          <div class="faq__answer" hidden>
-            <p>Oui, zones accessibles + assistance disponible.</p>
-          </div>
-        </li>
-  
-        <li class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span> Puis-je apporter de la nourriture ? </span>
-            <span class="faq__icon">+</span>
-          </button>
-          <div class="faq__answer" hidden>
-            <p>Oui, mais boissons en bouteille interdites.</p>
-          </div>
-        </li>
-  
-        <li class="faq__item">
-          <button class="faq__question" aria-expanded="false">
-            <span> Y a-t-il des stands de restauration ? </span>
-            <span class="faq__icon">+</span>
-          </button>
-          <div class="faq__answer" hidden>
-            <p>Oui, plusieurs food trucks et stands locaux.</p>
-          </div>
-        </li>
+      <ul class="faq u-list-unstyled" data-aos="fade-up">
+        {
+          faqItems.map((item) => (
+            <li class="faq__item">
+              <button class="faq__question" aria-expanded="false">
+                <span> {item.question} </span>
+                <span class="faq__icon">+</span>
+              </button>
+              <div class="faq__answer" hidden>
+                <p>{item.answer}</p>
+              </div>
+            </li>
+          ))
+        }
       </ul>
     </section>
   </main>
