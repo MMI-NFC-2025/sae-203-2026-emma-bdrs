@@ -1,36 +1,6 @@
 import PocketBase from "pocketbase";
 const pb = new PocketBase('https://festival.badarous.fr');
 
-export async function authUser(email, password) {
-	const client = createPocketBaseClient();
-	const authData = await client.collection("users").authWithPassword(email, password);
-
-	return {
-		token: client.authStore.token,
-		user: authData.record,
-	};
-}
-
-export async function authUserByToken(authToken) {
-	if (!authToken) {
-		return null;
-	}
-
-	const client = createPocketBaseClient();
-	client.authStore.save(authToken, null);
-
-	try {
-		const refreshed = await client.collection("users").authRefresh();
-		return {
-			token: client.authStore.token,
-			user: refreshed.record,
-		};
-	} catch {
-		client.authStore.clear();
-		return null;
-	}
-}
-
 export async function getArtistsByDate(collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList();
 	return artists.sort(
@@ -114,4 +84,45 @@ export async function saveArtistOrScene(entityType, data, optionsOrId = null) {
 	}
 
 	return client.collection(collection).create(payload);
+}
+
+export async function authUser(email, password) {
+	const client = createPocketBaseClient();
+	const authData = await client.collection("users").authWithPassword(email, password);
+
+	return {
+		token: client.authStore.token,
+		user: authData.record,
+	};
+}
+
+export async function authUserByToken(authToken) {
+	if (!authToken) {
+		return null;
+	}
+
+	const client = createPocketBaseClient();
+	client.authStore.save(authToken, null);
+
+	try {
+		const refreshed = await client.collection("users").authRefresh();
+		return {
+			token: client.authStore.token,
+			user: refreshed.record,
+		};
+	} catch {
+		client.authStore.clear();
+		return null;
+	}
+}
+
+export async function createUser(email, password, passwordConfirm) {
+	if (!email || !password || !passwordConfirm) {
+		throw new Error("Tous les champs sont requis.");
+	}
+	if (password !== passwordConfirm) {
+		throw new Error("Les mots de passe ne correspondent pas.");
+	}
+	const client = createPocketBaseClient();
+	return client.collection("users").create({ email, password, passwordConfirm });
 }

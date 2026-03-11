@@ -3,9 +3,10 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import ArtistListItem from "../../components/ArtistListItem.astro";
-import { fetchArtists, fetchScenes, fileUrl } from "../../lib/collections";
+import { getArtistsByName, getScenesByName } from "../../../backend/backend.mjs";
+import { fileUrl } from "../../lib/collections";
 
-const [artists, scenes] = await Promise.all([fetchArtists(), fetchScenes()]);
+const [artists, scenes] = await Promise.all([getArtistsByName(), getScenesByName()]);
 const sceneMap = new Map(scenes.map((scene: any) => [scene.id, scene.nom_scene ?? "Scene inconnue"]));
 artists.sort((a: any, b: any) => new Date(a.created ?? 0).getTime() - new Date(b.created ?? 0).getTime());
 ---
@@ -35,7 +36,7 @@ artists.sort((a: any, b: any) => new Date(a.created ?? 0).getTime() - new Date(b
 						{artists.map((artist: any, index: number) => (
 							<ArtistListItem
 								artist={artist}
-								sceneName={sceneMap.get(artist.scene) ?? "Scene inconnue"}
+								sceneName={String(sceneMap.get(artist.scene) ?? "Scene inconnue")}
 								imageUrl={fileUrl(artist, "photo_principale", "1200x1200")}
 								aosDelay={index * 90}
 							/>

@@ -2,15 +2,16 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
-import { concertLabel, fetchArtistsBySceneId, fetchSceneById, fileUrl } from "../../lib/collections";
+import { concertLabel, fileUrl } from "../../lib/collections";
+import { getArtistsBySceneId, getScene } from "../../../backend/backend.mjs";
 
 const id = Astro.params.id ?? "";
-const scene = await fetchSceneById(id);
+const scene = await getScene(id);
 if (!scene) {
 	return Astro.redirect("/404");
 }
 
-const artists = await fetchArtistsBySceneId(id);
+const artists = await getArtistsBySceneId(id);
 const sceneImage = fileUrl(scene, "photos", "1400x900");
 const sceneName = scene.nom_scene ?? "Scene";
 const sceneDescription = scene.description ?? "Description indisponible.";
@@ -50,10 +51,10 @@ const lineupArtists = artists.map((artist: any) => ({
 						{lineupArtists.length === 0 ? (
 							<li class="scene-artists__item">Aucun artiste programme.</li>
 						) : (
-							lineupArtists.map((artist) => (
+							lineupArtists.map((artistes) => (
 								<li class="scene-artists__item">
-									<a class="scene-page__artist-link" href={`/artistes/${artist.id}`}>
-										{artist.name} - {artist.date}
+									<a class="scene-page__artist-link" href={`/artistes/${artistes.id}`}>
+										{artistes.name} - {artistes.date}
 									</a>
 								</li>
 							))

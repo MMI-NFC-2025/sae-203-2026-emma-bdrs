@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { authUser, getUserByToken } from "../../backend/backend.mjs";
+import { authUser, authUserByToken } from "../../backend/backend.mjs";
 
 const title = "Connexion - Echos Sonores";
 const description = "Connexion utilisateur avec la collection users.";
@@ -43,7 +43,7 @@ if (Astro.request.method === "POST") {
 }
 
 const authToken = Astro.cookies.get(authCookieName)?.value ?? "";
-const session = authToken ? await getAuthenticatedUserByToken(authToken) : null;
+const session = authToken ? await authUserByToken(authToken) : null;
 const user = session?.user ?? null;
 
 if (session?.token && session.token !== authToken) {

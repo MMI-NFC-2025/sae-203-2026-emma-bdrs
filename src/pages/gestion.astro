@@ -4,9 +4,9 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import {
   getArtistsByName,
-  getUserByToken,
   getScenesByName,
   saveArtistOrScene,
+  authUserByToken,
 } from "../../backend/backend.mjs";
 
 const title = "Gestion - Echos Sonores";
@@ -15,7 +15,7 @@ const currentPath = "/gestion";
 const authCookieName = "pb_auth";
 
 const authToken = Astro.cookies.get(authCookieName)?.value ?? "";
-const session = authToken ? await getUserByToken(authToken) : null;
+const session = authToken ? await authUserByToken(authToken) : null;
 
 if (!session?.user) {
   Astro.cookies.delete(authCookieName, { path: "/" });
@@ -56,7 +56,7 @@ if (Astro.request.method === "POST") {
         throw new Error("Le nom de l'artiste est requis.");
       }
 
-      await saveArtistOrScene("artiste", payload, { id: recordId, authToken: session.token });
+      await saveArtistOrScene("artiste", payload, recordId !== null ? recordId : null);
       message = recordId ? "Artiste mis a jour." : "Artiste cree.";
     } else if (entityType === "scene") {
       const payload = {
@@ -68,7 +68,7 @@ if (Astro.request.method === "POST") {
         throw new Error("Le nom de la scene est requis.");
       }
 
-      await saveArtistOrScene("scene", payload, { id: recordId, authToken: session.token });
+      await saveArtistOrScene("scene", payload, recordId !== null ? recordId : null);
       message = recordId ? "Scene mise a jour." : "Scene creee.";
     } else {
       throw new Error("Type d'entite invalide.");

@@ -3,12 +3,13 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import SceneListItem from "../../components/SceneListItem.astro";
-import { fetchScenes, fileUrl } from "../../lib/collections";
+import { getScenesByName } from "../../../backend/backend.mjs";
+import { fileUrl } from "../../lib/collections";
 
 const title = "Scenes - Echos Sonores";
 const description = "Vue d'ensemble des scenes du festival Echos Sonores et des univers proposes.";
 const currentPath = "/scenes";
-const scenes = await fetchScenes();
+const scenes = await getScenesByName();
 
 const sceneOrder = ["roots", "dub", "fusion"];
 const normalizeSceneName = (value: string) =>
