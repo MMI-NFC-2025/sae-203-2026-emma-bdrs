@@ -13,25 +13,42 @@ const programmeDays = [
   {
     date: "28 oct",
     shows: [
-      "18h — Mystic Echoes (Dub)",
-      "19h30 — Naya & The Vibrations (Fusion)",
-      "21h — Jah Roots Collective (Roots)",
-      "22h30 — BassLine Dub System (Dub)",
+      { heure: "18h", artiste: "Mystic Echoes", genre: "Dub", scene: "Roots" },
+      { heure: "19h30", artiste: "Naya & The Vibrations", genre: "Fusion", scene: "Fusion" },
+      { heure: "21h", artiste: "Jah Roots Collective", genre: "Roots", scene: "Roots" },
+      { heure: "22h30", artiste: "BassLine Dub System", genre: "Dub", scene: "Dub" },
     ],
   },
   {
     date: "29 oct",
-    shows: ["17h30 — Kora Sunlight (Fusion)", "19h — Dub Strikers (Dub)", "21h — Lion Fire Crew (Roots)"],
+    shows: [
+      { heure: "17h30", artiste: "Kora Sunlight", genre: "Fusion", scene: "Fusion" },
+      { heure: "19h", artiste: "Dub Strikers", genre: "Dub", scene: "Dub" },
+      { heure: "21h", artiste: "Lion Fire Crew", genre: "Roots", scene: "Roots" },
+    ],
   },
   {
     date: "30 oct",
-    shows: ["18h — Soul of Irie (Roots)", "20h — Electric Dub Tribe (Fusion)", "22h — Rasta Motion (Roots)"],
+    shows: [
+      { heure: "18h", artiste: "Soul of Irie", genre: "Roots", scene: "Roots" },
+      { heure: "20h", artiste: "Electric Dub Tribe", genre: "Fusion", scene: "Fusion" },
+      { heure: "22h", artiste: "Rasta Motion", genre: "Roots", scene: "Roots" },
+    ],
   },
   {
     date: "31 oct",
-    shows: ["17h30 — Tribal Echo (Fusion)", "19h — Zion Pulse (Roots)", "21h30 — Midnight Dub Circle (Dub)"],
+    shows: [
+      { heure: "17h30", artiste: "Tribal Echo", genre: "Fusion", scene: "Fusion" },
+      { heure: "19h", artiste: "Zion Pulse", genre: "Roots", scene: "Roots" },
+      { heure: "21h30", artiste: "Midnight Dub Circle", genre: "Dub", scene: "Dub" },
+    ],
   },
 ];
+
+// Génération des filtres dynamiques
+const genres = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.genre))));
+const horaires = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.heure))));
+const scenes = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.scene))));
 ---
 
 <BaseLayout title={title} description={description}>
@@ -45,30 +62,54 @@ const programmeDays = [
             Retrouvez la programmation complète d'Echos Sonores: quatre jours de concerts
             reggae, dub et fusion, avec des artistes confirmés et émergents.
           </p>
-          <nav class="programme-filters" aria-label="Filtrer le programme par jour">
-            {
-              dayFilters.map((filter, index) => (
-                <button class={`programme-filters__btn ${index === 0 ? "programme-filters__btn--active" : ""}`} type="button">
-                  {filter}
-                </button>
-              ))
-            }
+          <nav class="programme-filters" aria-label="Filtrer le programme">
+            <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+              <div>
+                <label for="filter-jour">Jour :</label>
+                <select id="filter-jour" name="filter-jour">
+                  <option value="">Tous</option>
+                  {programmeDays.map(day => <option value={day.date}>{day.date}</option>)}
+                </select>
+              </div>
+              <div>
+                <label for="filter-genre">Genre :</label>
+                <select id="filter-genre" name="filter-genre">
+                  <option value="">Tous</option>
+                  {genres.map(genre => <option value={genre}>{genre}</option>)}
+                </select>
+              </div>
+              <div>
+                <label for="filter-horaire">Horaire :</label>
+                <select id="filter-horaire" name="filter-horaire">
+                  <option value="">Tous</option>
+                  {horaires.map(h => <option value={h}>{h}</option>)}
+                </select>
+              </div>
+              <div>
+                <label for="filter-scene">Scène :</label>
+                <select id="filter-scene" name="filter-scene">
+                  <option value="">Toutes</option>
+                  {scenes.map(scene => <option value={scene}>{scene}</option>)}
+                </select>
+              </div>
+            </div>
+            <p style="margin-top:0.5rem; font-size:0.95em; color:#888;">(Filtres visuels, non interactifs sans JS)</p>
           </nav>
         </header>
     
         <div class="programme-days">
-    
-          {
-            programmeDays.map((day) => (
-              <article class="programme-day" data-aos="fade-down">
-                <h2 class="programme-day__title">{day.date}</h2>
-
-                <ul class="programme-day__list u-list-unstyled">
-                  {day.shows.map((show) => <li class="programme-day__item">{show}</li>)}
-                </ul>
-              </article>
-            ))
-          }
+          {programmeDays.map((day) => (
+            <article class="programme-day" data-aos="fade-down">
+              <h2 class="programme-day__title">{day.date}</h2>
+              <ul class="programme-day__list u-list-unstyled">
+                {day.shows.map((show) => (
+                  <li class="programme-day__item">
+                    <strong>{show.heure}</strong> — {show.artiste} <span style="color:#888;">({show.genre}, {show.scene})</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
         </div>
     
         <div class="programme__cta" data-aos="fade-down">
