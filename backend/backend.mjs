@@ -1,3 +1,7 @@
+function createPocketBaseClient() {
+	// Utilise la même instance pour éviter les problèmes de cookies/auth
+	return pb;
+}
 import PocketBase from "pocketbase";
 const pb = new PocketBase('https://festival.badarous.fr');
 
