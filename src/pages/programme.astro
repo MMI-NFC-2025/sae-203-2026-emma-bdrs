@@ -45,10 +45,9 @@ const programmeDays = [
   },
 ];
 
-// Génération des filtres dynamiques
-const genres = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.genre))));
-const horaires = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.heure))));
-const scenes = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(show => show.scene))));
+const genres = [...new Set(programmeDays.flatMap(day => day.shows.map(show => show.genre)))];
+const horaires = [...new Set(programmeDays.flatMap(day => day.shows.map(show => show.heure)))];
+const scenes = [...new Set(programmeDays.flatMap(day => day.shows.map(show => show.scene)))];
 ---
 
 <BaseLayout title={title} description={description}>
@@ -120,6 +119,43 @@ const scenes = Array.from(new Set(programmeDays.flatMap(day => day.shows.map(sho
       </section>
     </main>
 
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+          const filterJour = document.getElementById('filter-jour');
+          const filterGenre = document.getElementById('filter-genre');
+          const filterHoraire = document.getElementById('filter-horaire');
+          const filterScene = document.getElementById('filter-scene');
+          const dayArticles = document.querySelectorAll('.programme-day');
+
+          function filterProgramme() {
+            const jour = filterJour.value;
+            const genre = filterGenre.value;
+            const horaire = filterHoraire.value;
+            const scene = filterScene.value;
+
+            dayArticles.forEach(article => {
+              let showAny = false;
+              const showList = article.querySelectorAll('.programme-day__item');
+              showList.forEach(item => {
+                const text = item.textContent;
+                const matchJour = !jour || article.querySelector('.programme-day__title').textContent === jour;
+                const matchGenre = !genre || text.includes(`(${genre},`);
+                const matchHoraire = !horaire || text.startsWith(horaire);
+                const matchScene = !scene || text.includes(`, ${scene})`);
+                const visible = matchJour && matchGenre && matchHoraire && matchScene;
+                item.style.display = visible ? '' : 'none';
+                if (visible) showAny = true;
+              });
+              article.style.display = showAny ? '' : 'none';
+              article.style.display = showAny ? '' : 'none';
+            });
+          }
+
+          [filterJour, filterGenre, filterHoraire, filterScene].forEach(f => {
+            f.addEventListener('change', filterProgramme);
+          });
+        });
+      </script>
     <Footer />
 
 </BaseLayout>
