@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import { authenticateUserByEmail, getAuthenticatedUserByToken } from "../../backend/backend.mjs";
+import { authUser, getUserByToken } from "../../backend/backend.mjs";
 
 const title = "Connexion - Echos Sonores";
 const description = "Connexion utilisateur avec la collection users.";
@@ -28,7 +28,7 @@ if (Astro.request.method === "POST") {
     errorMessage = "Email et mot de passe requis.";
   } else {
     try {
-      const session = await authenticateUserByEmail(email, password);
+        const session = await authUser(email, password);
       Astro.cookies.set(authCookieName, session.token, {
         path: "/",
         httpOnly: true,

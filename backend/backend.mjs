@@ -1,14 +1,7 @@
 import PocketBase from "pocketbase";
+const pb = new PocketBase('https://festival.badarous.fr');
 
-export const PB_URL = "https://festival.badarous.fr";
-
-export function createPocketBaseClient() {
-	return new PocketBase(PB_URL);
-}
-
-export const pb = createPocketBaseClient();
-
-export async function authenticateUserByEmail(email, password) {
+export async function authUser(email, password) {
 	const client = createPocketBaseClient();
 	const authData = await client.collection("users").authWithPassword(email, password);
 
@@ -18,7 +11,7 @@ export async function authenticateUserByEmail(email, password) {
 	};
 }
 
-export async function getAuthenticatedUserByToken(authToken) {
+export async function authUserByToken(authToken) {
 	if (!authToken) {
 		return null;
 	}
@@ -38,32 +31,32 @@ export async function getAuthenticatedUserByToken(authToken) {
 	}
 }
 
-export async function getArtistsSortedByRepresentationDate(collection = "artiste") {
+export async function getArtistsByDate(collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList();
 	return artists.sort(
 		(a, b) => new Date(a.date_representation) - new Date(b.date_representation)
 	);
 }
 
-export async function getScenesSortedByName(collection = "scene") {
+export async function getScenesByName(collection = "scene") {
 	const scenes = await pb.collection(collection).getFullList();
 	return scenes.sort((a, b) => (a.nom_scene ?? "").localeCompare(b.nom_scene ?? "", "fr"));
 }
 
-export async function getArtistsSortedByName(collection = "artiste") {
+export async function getArtistsByName(collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList();
 	return artists.sort((a, b) => (a.nom_artiste ?? "").localeCompare(b.nom_artiste ?? "", "fr"));
 }
 
-export async function getArtistById(artistId, collection = "artiste") {
+export async function getArtist(artistId, collection = "artiste") {
 	return pb.collection(collection).getOne(artistId);
 }
 
-export async function getSceneById(sceneId, collection = "scene") {
+export async function getScene(sceneId, collection = "scene") {
 	return pb.collection(collection).getOne(sceneId);
 }
 
-export async function getArtistsBySceneIdSortedByDate(sceneId, collection = "artiste") {
+export async function getArtistsBySceneId(sceneId, collection = "artiste") {
 	const artists = await pb.collection(collection).getFullList({
 		filter: `scene = "${sceneId}"`,
 	});
@@ -73,7 +66,7 @@ export async function getArtistsBySceneIdSortedByDate(sceneId, collection = "art
 	);
 }
 
-export async function getArtistsBySceneNameSortedByDate(sceneName, sceneCollection = "scene", artistCollection = "artiste") {
+export async function getArtistsBySceneName(sceneName, sceneCollection = "scene", artistCollection = "artiste") {
 	const scenes = await pb.collection(sceneCollection).getFullList();
 	const targetScene = scenes.find(
 		(scene) => (scene.nom_scene ?? scene.nom ?? "").toLowerCase() === sceneName.toLowerCase()

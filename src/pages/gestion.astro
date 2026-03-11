@@ -3,9 +3,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import {
-  getArtistsSortedByName,
-  getAuthenticatedUserByToken,
-  getScenesSortedByName,
+  getArtistsByName,
+  getUserByToken,
+  getScenesByName,
   saveArtistOrScene,
 } from "../../backend/backend.mjs";
 
@@ -15,7 +15,7 @@ const currentPath = "/gestion";
 const authCookieName = "pb_auth";
 
 const authToken = Astro.cookies.get(authCookieName)?.value ?? "";
-const session = authToken ? await getAuthenticatedUserByToken(authToken) : null;
+const session = authToken ? await getUserByToken(authToken) : null;
 
 if (!session?.user) {
   Astro.cookies.delete(authCookieName, { path: "/" });
@@ -78,7 +78,7 @@ if (Astro.request.method === "POST") {
   }
 }
 
-const [artists, scenes] = await Promise.all([getArtistsSortedByName(), getScenesSortedByName()]);
+const [artists, scenes] = await Promise.all([getArtistsByName(), getScenesByName()]);
 ---
 
 <BaseLayout title={title} description={description}>

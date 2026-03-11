@@ -24,8 +24,7 @@ if (Astro.request.method === "POST") {
     errorMessage = "Les mots de passe ne correspondent pas.";
   } else {
     try {
-      const pb = createPocketBaseClient();
-      await pb.collection("users").create({ email, password, passwordConfirm });
+      await createUser(email, password, passwordConfirm);
       infoMessage = "Compte créé ! Vous pouvez vous connecter.";
     } catch (e) {
       errorMessage = "Erreur lors de la création du compte.";
