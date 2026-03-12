@@ -1,10 +1,10 @@
 import {
   pb,
-  getArtistById,
-  getArtistsBySceneIdSortedByDate,
-  getArtistsSortedByRepresentationDate,
-  getSceneById,
-  getScenesSortedByName,
+  getArtist,
+  getArtistsBySceneId,
+  getScene,
+  getScenesByName,
+  getArtistsByDate,
 } from "../../backend/backend.mjs";
 
 function logPocketBaseError(scope: string, error: any) {
@@ -18,7 +18,7 @@ function isClientError(error: any, status: number) {
 
 export async function fetchArtists() {
   try {
-    return await getArtistsSortedByRepresentationDate();
+    return await getArtistsByDate();
   } catch (error) {
     logPocketBaseError("fetchArtists", error);
     return [];
@@ -27,7 +27,7 @@ export async function fetchArtists() {
 
 export async function fetchScenes() {
   try {
-    return await getScenesSortedByName();
+    return await getScenesByName();
   } catch (error) {
     logPocketBaseError("fetchScenes", error);
     return [];
@@ -36,7 +36,7 @@ export async function fetchScenes() {
 
 export async function fetchArtistById(id: string) {
   try {
-    return await getArtistById(id);
+    return await getArtist(id);
   } catch (error) {
     if (!isClientError(error, 404) && !isClientError(error, 403)) {
       logPocketBaseError("fetchArtistById", error);
@@ -47,7 +47,7 @@ export async function fetchArtistById(id: string) {
 
 export async function fetchSceneById(id: string) {
   try {
-    return await getSceneById(id);
+    return await getScene(id);
   } catch (error) {
     if (!isClientError(error, 404) && !isClientError(error, 403)) {
       logPocketBaseError("fetchSceneById", error);
@@ -58,7 +58,7 @@ export async function fetchSceneById(id: string) {
 
 export async function fetchArtistsBySceneId(sceneId: string) {
   try {
-    return await getArtistsBySceneIdSortedByDate(sceneId);
+    return await getArtistsBySceneId(sceneId);
   } catch (error) {
     logPocketBaseError("fetchArtistsBySceneId", error);
     return [];

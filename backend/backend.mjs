@@ -130,3 +130,5 @@ export async function createUser(email, password, passwordConfirm) {
 function createPocketBaseClient() {
 	return pb;
 }
+
+export{pb};
